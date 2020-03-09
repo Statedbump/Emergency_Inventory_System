@@ -30,7 +30,7 @@ class supplierHandler:
         suppliers_list = {sup1, sup2}
         result_list = []
         for row in suppliers_list:
-            result = self.build_person_dict(row)
+            result = self.build_supplier_dict(row)
             result_list.append(result)
         return jsonify(PersonList=result_list)
 
@@ -39,7 +39,7 @@ class supplierHandler:
         if not sup1:
             return jsonify(Error="Person Not Found"), 404
         else:
-            person = self.build_person_dict(sup1)
+            person = self.build_supplier_dict(sup1)
         return jsonify(Person=person)
 
     def getResourcesBySupplierId(self, pid):
@@ -66,7 +66,7 @@ class supplierHandler:
                 person_list = {sup1, sup2}
                 result_list = []
                 for row in person_list:
-                    result = self.build_person_dict(row)
+                    result = self.build_supplier_dict(row)
                     result_list.append(row)
                 return jsonify(SuppliersList=result_list)
             else:
