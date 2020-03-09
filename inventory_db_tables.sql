@@ -5,7 +5,7 @@ create table login(login_id serial primary key, username varchar(100), password 
 
 
 create table person(p_id serial primary key,first_name varchar(100),
-			middle_initial char(3),email varchar(320),
+			middle_initial varchar(3),last_name varchar(100),email varchar(320),
 			location_of_p varchar(300), login_id integer references login(login_id),phone varchar(15));
 
 
