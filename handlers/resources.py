@@ -55,10 +55,90 @@ class ResourcesHandler:
         return result
 
     def getAllResources(self):
-    def getResourceById(self,r_id):
-    def searchResource(self,args):
-    def getSupplierByResourceId(self,r_id):
+        r1=(1,'batteries',10,'San Juan',10.0,TRUE)
+        r2=(1,'water',3,'San Juan',4.35,TRUE)
 
-    def insertResource
+        resource_list = {r1,r2}
+        result = []
+        for row in person_list:
+            result.append(self.build_resource_dict(row))
+        return jsonify(ResourceList=result)
+
+
+        
+    def getResourceById(self,r_id):
+        r1=(1,'batteries',10,'San Juan',10.0,TRUE) 
+
+        if not r1:
+            return jsonify(Eror = 'Resource Not Found'),404
+        else:
+            r = self.build_resource_dict(r1)
+        return jsonify(Resource=r)
+
+    def searchResource(self,args):
+        
+    def getSupplierByResourceId(self,r_id):
+    def getPersonByResourceId(self,r_id):
+
+    def insertResource(self,form):
+        if len(form) < 5 or len(form) >8:
+            return jsonify(Error = "Malformed pst Request"),400
+        else:
+            r_type = form['r_type']
+            r_quantity = form['r_quantity']
+            r_location  = form['r_location']
+            r_price = form['r_price']
+            r_availability = form['r_availability']
+            if 'water' in r_type:
+                water_type = form['water_type']
+                measurement_unit = form['measurement_unit']
+            if 'fuel' in r_type:
+                fuel_type = form['fuel_type']
+                fuel_octane_rating = form['fuel_octane_rating']
+            if 'food' in r_type:
+                food_type = form['food_type']
+            
+            if r_type and r_quantity and r_location and r_price and r_availability:
+                if water_type and measurement_unit:
+                    result = build_resource_attributes():
+                if fuel_type and fuel_octane_rating:
+                    result = build_resource_attributes():
+                if food_type:
+                    result = build_resource_attributes():
+
+                return jsonify(Resource=result),201
+            else
+                return jsonify('Unexpected attributes in post request'),401
+            
+    def insertResourceJson(self,json):
+
+        r_type = json['r_type']
+        r_quantity = json['r_quantity']
+        r_location  = json['r_location']
+        r_price = json['r_price']
+        r_availability = json['r_availability']
+        if 'water' in r_type:
+            water_type = json['water_type']
+            measurement_unit = json['measurement_unit']
+        if 'fuel' in r_type:
+            fuel_type = json['fuel_type']
+            fuel_octane_rating = json['fuel_octane_rating']
+        if 'food' in r_type:
+            food_type = json['food_type']
+        
+        if r_type and r_quantity and r_location and r_price and r_availability:
+            if water_type and measurement_unit:
+                result = build_resource_attributes():
+            if fuel_type and fuel_octane_rating:
+                result = build_resource_attributes():
+            if food_type:
+                result = build_resource_attributes():
+
+            return jsonify(Resource=result),201
+        else
+            return jsonify('Unexpected attributes in post request'),401 
+
+    
+
 
 
