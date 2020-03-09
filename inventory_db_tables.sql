@@ -1,16 +1,16 @@
 create table login(login_id serial primary key, username varchar(100), password varchar(100));
 create table person(p_id serial primary key,first_name varchar(100),
 			middle_initial char(3),email varchar(320),
-			location_of_p varchar(300), login_id integer references login(login_id));
+			location_of_p varchar(300), login_id integer references login(login_id),phone varchar(15));
 create table supplier(supplier_id serial primary key, first_name varchar(100),
 					  middle_initial char(3),last_name varchar(100), company_name varchar(150),
 					  warehouse_address varchar(200),supplier_location varchar(300),
-					  login_id integer references login(login_id)
+					  login_id integer references login(login_id),phone varchar(15)
 					  );
 create table administrator(admin_id serial primary key, p_id integer references person(p_id),permission_key varchar(100));
 
 create table resource(r_id serial primary key,resource_type char(100)
-,quantity integer,res_location varchar(150));
+,quantity integer,res_location varchar(150),r_price float);
 
 /* Relations*/
 create table supplies(supplier_id integer references supplier(supplier_id),
