@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from handlers.personhandler import PersonHandler
 from handlers.supplierhandler import supplierHandler
+from handlers.administratorhandler import AdministratorHandler
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -67,5 +68,19 @@ def getSupplierById(p_id):
 def getResourcesBySupplierId(p_id):
     return supplierHandler().getResourcesBySupplierId(p_id)
 
+@app.route('/ERIApp/administrator')
+def getAllAdmin():
+    return AdministratorHandler().getAllAdmin()
+
+@app.route('/ERIApp/administrator/<int:adm_id>')
+def getAdminByAdmId(adm_id):
+    return AdministratorHandler().getAdminByAdmId(adm_id)
+
+@app.route('/ERIApp/administrator/<int:adm_id>/resources')
+def getResourcesByAdminId(adm_id):
+    return AdministratorHandler().getResourcesByAdminId(adm_id)
+
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
