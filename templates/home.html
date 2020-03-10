@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+
+<body>
+    <div align="center">
+    <h1>Emergency Resource Inventory Application Home</h1>
+    <hr><br>
+
+        <form action = "/ERIApp/person" method = "get">
+            <input type ="submit" value="Show all customers">
+        </form>
+        <form action = "/ERIApp/person" method = "post">
+            <input type ="submit" value="Add a customer">
+        </form>
+        <form action = "/ERIApp/person/pid" method = "get">
+            Person ID: <br>
+            <input type ="text" name="pid" required><br><br>
+            <input type ="submit" value="Show person by ID">
+        </form>
+</body>
+</html>

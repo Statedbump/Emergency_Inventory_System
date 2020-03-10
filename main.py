@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from handlers.personhandler import PersonHandler
 from handlers.resources import ResourcesHandler
 from handlers.supplierhandler import supplierHandler
@@ -13,8 +13,12 @@ app = Flask(__name__)
 CORS(app)
 #------> Person <---------
 @app.route('/')
-def greetings():
-    return 'Welcome to the Emergency Resource Inventory Application!'
+def login():
+    return render_template("login.html")
+
+@app.route('/ERIApp', methods=['POST'])
+def home():
+    return render_template("home.html")
 
 @app.route('/ERIApp/person', methods=['GET', 'POST'])
 def getAllPerson():
