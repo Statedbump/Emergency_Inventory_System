@@ -1,5 +1,5 @@
 from flask import jsonify
-from dao.resources import ResourcesDAO
+#from dao.resources import ResourcesDAO
 
 class ResourcesHandler:
     def build_resource_dict(self,row):
@@ -10,6 +10,8 @@ class ResourcesHandler:
         result['r_location'] = row[3]
         result['r_price'] = row[4]
         result['r_availability'] = row[5]
+
+        return result
         ##Specializations NEEDED??
 
     def build_supplier_dict(self,row):
@@ -22,6 +24,8 @@ class ResourcesHandler:
         result['supplier_location'] = row[5]
         result['login_id'] = row[6]
         result['phone'] = row[7]
+        result['email'] = row[8]
+        return result
 
     def buld_person_dict(self,row):
         result = {}
@@ -32,8 +36,9 @@ class ResourcesHandler:
         result['location_of_p'] = row[4]
         result['login_id'] = row[5]
         result['phone'] = row[6]
+        return result
 
-    def build_resource_attributes(self,r_id,r_type,r_quantity,r_location,r_price,r_availability, w_id = NULL,water_type=NULL,measurement_unit=NULL,fuel_id=NULL,fuel_type=NULL,fuel_octane_rating=NULL,food_id=NULL,food_type=NULL):
+    def build_resource_attributes(self,r_id,r_type,r_quantity,r_location,r_price,r_availability, w_id =None ,water_type=None,measurement_unit=None,fuel_id=None,fuel_type=None,fuel_octane_rating=None,food_id=None,food_type=None):
         result['r_id'] = r_id
         result['r_type'] = r_type
         result['r_quantity'] = r_quantity
@@ -55,19 +60,20 @@ class ResourcesHandler:
         return result
 
     def getAllResources(self):
-        r1=(1,'batteries',10,'San Juan',10.0,TRUE)
-        r2=(1,'water',3,'San Juan',4.35,TRUE)
+        r1=(1,'batteries',10,'San Juan',10.0,True)
+        r2=(1,'water',3,'San Juan',4.35,True)
 
         resource_list = {r1,r2}
-        result = []
-        for row in person_list:
-            result.append(self.build_resource_dict(row))
-        return jsonify(ResourceList=result)
+        result_list =[]
+        for row in resource_list:
+            result = self.build_resource_dict(row)
+            result_list.append(result)
+        return jsonify(ResourceList=result_list)
 
 
         
     def getResourceById(self,r_id):
-        r1=(1,'batteries',10,'San Juan',10.0,TRUE) 
+        r1=(1,'batteries',10,'San Juan',10.0,True) 
 
         if not r1:
             return jsonify(Eror = 'Resource Not Found'),404
@@ -76,9 +82,65 @@ class ResourcesHandler:
         return jsonify(Resource=r)
 
     def searchResource(self,args):
+        r_type = args.get('r_type')
+        r_availability = args.get('r_availability')
+        r_location = args.get('r_location')
         
-    def getSupplierByResourceId(self,r_id):
+        if(len(args)== 2) and r_type and r_availability:
+            r1=(1,'water',2,'San Juan',5.0,True)
+            r2=(1,'water',1,'San Juan',4.35,True)
+
+        elif(len(args)== 1) and r_type:
+            r1=(1,'batteries',10,'San Juan',10.0,True)
+            r2=(1,'batteries',3,'San Juan',4.35,True)
+        elif(len(args) ==1 ) and r_availability:
+            r1=(1,'batteries',10,'San Juan',10.0,True)
+            r2=(1,'water',3,'San Juan',4.35,True)
+
+        elif(len(args) ==1 ) and r_location:
+            r1=(1,'batteries',10,'San Juan',10.0,True)
+            r2=(1,'water',3,'San Juan',4.35,True)
+        else:
+            return jsonify(Error = "Malformed query string"), 400
+        resource_list = {r1,r2}
+        result =[]
+        for row in resource_list:
+            result.append(self.build_resource_dict(row))
+        return jsonify(ResourceList=result)
+
+
+        
+        
+    def getSuppliersByResourceId(self,r_id):
+        sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine',1,'777-127-8789' ,'starkiller@rebels.com')
+        sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant',1,'777-127-8889' ,'princess@rebels.com')
+        resource = (2,'Batteries',5,'Mayaguez',5.0,True)
+        supplier_list = {sup1,sup2}
+        if not resource:
+            return jsonify(Error="Resource Not Found"), 404
+
+        result_list = []
+        for row in supplier_list:
+            result = self.build_supplier_dict(row)
+            result_list.append(result)
+        return jsonify(SupplierByResourcesID=result_list)
+
+
     def getPersonByResourceId(self,r_id):
+        p1 = (1,'Joe','F','Chill','joe.chill@upr.edu','Jayuyas','1','7877787811')
+        p2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','2','9399399393')
+        resource = (2,'Batteries',5,'Mayaguez',5.0,True)
+
+        person_list = {p1,p2}
+        if not resource:
+            return jsonify(Error="Resource Not Found"), 404
+
+        result_list = []
+        for row in person_list:
+            result = self.buld_person_dict(row)
+            result_list.append(result)
+        return jsonify(PersonByResourcesID=result_list)
+
 
     def insertResource(self,form):
         if len(form) < 5 or len(form) >8:
@@ -100,14 +162,14 @@ class ResourcesHandler:
             
             if r_type and r_quantity and r_location and r_price and r_availability:
                 if water_type and measurement_unit:
-                    result = build_resource_attributes():
+                    result = build_resource_attributes()
                 if fuel_type and fuel_octane_rating:
-                    result = build_resource_attributes():
+                    result = build_resource_attributes()
                 if food_type:
-                    result = build_resource_attributes():
+                    result = build_resource_attributes()
 
                 return jsonify(Resource=result),201
-            else
+            else:
                 return jsonify('Unexpected attributes in post request'),401
             
     def insertResourceJson(self,json):
@@ -128,14 +190,14 @@ class ResourcesHandler:
         
         if r_type and r_quantity and r_location and r_price and r_availability:
             if water_type and measurement_unit:
-                result = build_resource_attributes():
+                result = build_resource_attributes()
             if fuel_type and fuel_octane_rating:
-                result = build_resource_attributes():
+                result = build_resource_attributes()
             if food_type:
-                result = build_resource_attributes():
+                result = build_resource_attributes()
 
             return jsonify(Resource=result),201
-        else
+        else:
             return jsonify('Unexpected attributes in post request'),401 
 
     
