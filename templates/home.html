@@ -11,16 +11,60 @@
     <h1>Emergency Resource Inventory Application Home</h1>
     <hr><br>
 
+        Customer Handlers: <br>
         <form action = "/ERIApp/person" method = "get">
             <input type ="submit" value="Show all customers">
         </form>
         <form action = "/ERIApp/person" method = "post">
             <input type ="submit" value="Add a customer">
         </form>
-        <form action = "/ERIApp/person/pid" method = "get">
-            Person ID: <br>
-            <input type ="text" name="pid" required><br><br>
-            <input type ="submit" value="Show person by ID">
+        <form action = "/ERIApp/person/1" method = "get">
+            <input type ="submit" value="Show customer with id=1">
         </form>
+        <form action = "/ERIApp/person/1/resources" method = "get">
+            <input type ="submit" value="Show resources customer with id=1">
+        </form> <br>
+
+        Supplier Handlers: <br>
+        <form action = "/ERIApp/suppliers" method = "get">
+            <input type ="submit" value="Show all suppliers">
+        </form>
+        <form action = "/ERIApp/suppliers" method = "post">
+            <input type ="submit" value="Add a supplier">
+        </form>
+        <form action = "/ERIApp/suppliers/1" method = "get">
+            <input type ="submit" value="Show supplier with id=1">
+        </form>
+        <form action = "/ERIApp/suppliers/1/resources" method = "get">
+            <input type ="submit" value="Show resources for supplier with id=1">
+        </form> <br>
+
+        Resourse Handlers: <br>
+        <form action = "/ERIApp/person" method = "get">
+            <input type ="submit" value="Show all customers">
+        </form>
+        <form action = "/ERIApp/person" method = "post">
+            <input type ="submit" value="Add a customer">
+        </form>
+        <form action = "/ERIApp/person/1" method = "get">
+            <input type ="submit" value="Show customer with id=1">
+        </form>
+        <form action = "/ERIApp/person/1/resources" method = "get">
+            <input type ="submit" value="Show customer with id=1 resources">
+        </form> <br>
+
+        Administrator Handlers: <br>
+        <form action = "/ERIApp/administrator" method = "get">
+            <input type ="submit" value="Show all administrators">
+        </form>
+        <form action = "/ERIApp/administrator" method = "post">
+            <input type ="submit" value="Add an administrator">
+        </form>
+        <form action = "/ERIApp/administrator/1" method = "get">
+            <input type ="submit" value="Show administrator with id=1">
+        </form>
+        <form action = "/ERIApp/person/1/resources" method = "get">
+            <input type ="submit" value="Show resources for administrator with id=1">
+        </form> <br>
 </body>
 </html>
