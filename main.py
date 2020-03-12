@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, render_template
 from handlers.personhandler import PersonHandler
 from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
+from handlers.resources import ResourcesHandler
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
