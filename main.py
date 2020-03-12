@@ -23,7 +23,7 @@ def landing():
 @app.route('/ERIApp/signup')
 def signup():
     return render_template("signup.html")
-
+#-----Person------
 @app.route('/ERIApp/person', methods=['GET', 'POST'])
 def getAllPerson():
     if request.method == 'POST':
@@ -50,6 +50,8 @@ def getPersonById(p_id):
 def getResourcesByPersonId(p_id):
     return PersonHandler().getResourcesByPersonId(p_id)
 
+
+#------Supplier--------
 @app.route('/ERIApp/suppliers', methods=['GET', 'POST'])
 def getAllSuppliers():
     if request.method == 'POST':
@@ -76,6 +78,7 @@ def getSupplierById(p_id):
 def getResourcesBySupplierId(p_id):
     return supplierHandler().getResourcesBySupplierId(p_id)
 
+#-----Admin------
 @app.route('/ERIApp/administrator')
 def getAllAdmin():
     return AdministratorHandler().getAllAdmin()
@@ -87,6 +90,37 @@ def getAdminByAdmId(adm_id):
 @app.route('/ERIApp/administrator/<int:adm_id>/resources')
 def getResourcesByAdminId(adm_id):
     return AdministratorHandler().getResourcesByAdminId(adm_id)
+
+#----->Resources<-----
+@app.route('/ERIApp/resource', methods=['GET', 'POST'])
+def getAllResources():
+    if request.method == 'POST':
+        return ResourcesHandler().insertResource(request.form)
+    else :
+        if not request.args:
+            return ResourcesHandler().getAllResources()
+        else:
+            return ResourcesHandler().searchResource(request.args)
+
+@app.route('/ERIApp/resource/<int:r_id>',
+           methods=['GET', 'PUT', 'DELETE'])
+def getResourceById(r_id):
+    if request.method == 'GET':
+        return ResourcesHandler().getResourceById(r_id)
+    elif request.method == 'PUT':
+        pass
+    elif request.method == 'DELETE':
+        pass
+    else:
+        return jsonify(Error = "Method not allowed"), 405
+
+@app.route('/ERIApp/resource/<int:r_id>/person')
+def getPersonByResourceId(r_id):
+    return ResourcesHandler().getPersonByResourceId(r_id)
+
+@app.route('/ERIApp/resource/<int:r_id>/supplier')
+def getSupplierByResourceId(r_id):
+    return ResourcesHandler().getSuppliersByResourceId(r_id) 
 
 if __name__ == '__main__':
     app.run(debug=True)
