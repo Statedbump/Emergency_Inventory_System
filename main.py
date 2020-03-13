@@ -13,7 +13,7 @@ app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
 
-@app.route('/')
+@app.route('/ERIApp')
 def login():
     return render_template("login.html")
 
