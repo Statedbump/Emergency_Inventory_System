@@ -12,6 +12,7 @@ class supplierHandler:
         result['company_name'] = row[5]
         result['warehouse_address'] = row[6]
         result['p_phone'] = row[7]
+        result['login_id'] = row[8]
         return result
 
     def build_resource_dict(self, row):
@@ -25,8 +26,8 @@ class supplierHandler:
         return result
 
     def getAllSuppliers(self):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878')
-        sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393')
+        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+        sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
         suppliers_list = {sup1, sup2}
         result_list = []
         for row in suppliers_list:
@@ -35,7 +36,7 @@ class supplierHandler:
         return jsonify(PersonList=result_list)
 
     def getSupplierById(self, pid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878')
+        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
         if not sup1:
             return jsonify(Error="Person Not Found"), 404
         else:
@@ -43,7 +44,7 @@ class supplierHandler:
         return jsonify(Person=person)
 
     def getResourcesBySupplierId(self, pid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878')
+        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
         resource1= (1,'Ice',1,'Mayaguez',1.0,True)
         resource2= (2,'Batteries',5,'Mayaguez',5.0,True)
         resources_list ={resource1,resource2}
@@ -61,8 +62,8 @@ class supplierHandler:
         else:
             location = args.get("location_of_p")
             if location:
-                sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878')
-                sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393')
+                sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+                sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
                 person_list = {sup1, sup2}
                 result_list = []
                 for row in person_list:
@@ -73,7 +74,7 @@ class supplierHandler:
                 return jsonify(Error="Malformed search string."), 400
 
     def insertSupplier(self, form):
-        if form and len(form) == 7:
+        if form and len(form) == 8:
             sfirstname = form['s_first_name']
             smiddleinitial = form['s_middle_initial']
             slastname = form['s_last_name']
@@ -81,8 +82,10 @@ class supplierHandler:
             companyname = form['company_name']
             warehouseaddress = form['warehouse_address']
             pphone = form['p_phone']
-            if sfirstname and slastname and smiddleinitial and slocation and companyname and warehouseaddress and pphone:
-                row = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878')
+            loginID = form['login_id']
+            if sfirstname and slastname and smiddleinitial and slocation\
+                    and companyname and warehouseaddress and pphone and loginID:
+                row = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
                 result = {}
                 result['p_id'] = row[0]
                 result['p_first_name'] = row[1]
@@ -92,6 +95,7 @@ class supplierHandler:
                 result['location_of_p'] = row[5]
                 result['login_id'] = row[6]
                 result['p_phone'] = row[7]
+                result['login_id'] = row[8]
                 return jsonify(Person=result), 201
             else:
                 return jsonify(Error="Malformed post request.")

@@ -80,20 +80,20 @@ def getResourcesBySupplierId(p_id):
     return supplierHandler().getResourcesBySupplierId(p_id)
 
 #-----Admin------
-@app.route('/ERIApp/administrator')
+@app.route('/ERIApp/administrators')
 def getAllAdmin():
     return AdministratorHandler().getAllAdmin()
 
-@app.route('/ERIApp/administrator/<int:adm_id>')
+@app.route('/ERIApp/administrators/<int:adm_id>')
 def getAdminByAdmId(adm_id):
     return AdministratorHandler().getAdminByAdmId(adm_id)
 
-@app.route('/ERIApp/administrator/<int:adm_id>/resources')
+@app.route('/ERIApp/administrators/<int:adm_id>/resources')
 def getResourcesByAdminId(adm_id):
     return AdministratorHandler().getResourcesByAdminId(adm_id)
 
 #----->Resources<-----
-@app.route('/ERIApp/resource', methods=['GET', 'POST'])
+@app.route('/ERIApp/resources', methods=['GET', 'POST'])
 def getAllResources():
     if request.method == 'POST':
         return ResourcesHandler().insertResource(request.form)
@@ -103,7 +103,7 @@ def getAllResources():
         else:
             return ResourcesHandler().searchResource(request.args)
 
-@app.route('/ERIApp/resource/<int:r_id>',
+@app.route('/ERIApp/resources/<int:r_id>',
            methods=['GET', 'PUT', 'DELETE'])
 def getResourceById(r_id):
     if request.method == 'GET':
@@ -115,11 +115,11 @@ def getResourceById(r_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/ERIApp/resource/<int:r_id>/person')
+@app.route('/ERIApp/resources/<int:r_id>/person')
 def getPersonByResourceId(r_id):
     return ResourcesHandler().getPersonByResourceId(r_id)
 
-@app.route('/ERIApp/resource/<int:r_id>/supplier')
+@app.route('/ERIApp/resources/<int:r_id>/supplier')
 def getSupplierByResourceId(r_id):
     return ResourcesHandler().getSuppliersByResourceId(r_id) 
 

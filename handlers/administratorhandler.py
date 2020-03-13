@@ -11,7 +11,7 @@ class AdministratorHandler:
     def build_resource_dict(self, row):
         result = {}
         result['r_id'] = row[0]
-        result['resurce_type'] = row[1]
+        result['resource_type'] = row[1]
         result['quantity'] = row[2]
         result['res_location'] = row[3]
         result['r_price'] = row[4]

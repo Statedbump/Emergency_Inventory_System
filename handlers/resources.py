@@ -14,31 +14,33 @@ class ResourcesHandler:
         return result
         ##Specializations NEEDED??
 
-    def build_supplier_dict(self,row):
+    def build_supplier_dict(self, row):
         result = {}
-        result['first_name'] = row[0]
-        result['middle_initial'] = row[1]
-        result['last_name'] = row[2]
-        result['company_name'] = row[3]
-        result['warehouse_location'] = row[4]
-        result['supplier_location'] = row[5]
-        result['login_id'] = row[6]
-        result['phone'] = row[7]
-        result['email'] = row[8]
+        result['s_id'] = row[0]
+        result['s_first_name'] = row[1]
+        result['s_middle_initial'] = row[2]
+        result['s_last_name'] = row[3]
+        result['s_location'] = row[4]
+        result['company_name'] = row[5]
+        result['warehouse_address'] = row[6]
+        result['p_phone'] = row[7]
+        result['login_id'] = row[8]
         return result
 
-    def buld_person_dict(self,row):
+    def build_person_dict(self, row):
         result = {}
-        result['first_name'] = row[0]
-        result['middle_initial'] = row[1]
-        result['last_name'] = row[2]
-        result['email'] = row[3]
-        result['location_of_p'] = row[4]
-        result['login_id'] = row[5]
-        result['phone'] = row[6]
+        result['p_id'] = row[0]
+        result['p_first_name'] = row[1]
+        result['p_middle_initial'] = row[2]
+        result['p_last_name'] = row[3]
+        result['email'] = row[4]
+        result['location_of_p'] = row[5]
+        result['p_phone'] = row[6]
+        result['login_id'] = row[7]
         return result
 
     def build_resource_attributes(self,r_id,r_type,r_quantity,r_location,r_price,r_availability, w_id =None ,water_type=None,measurement_unit=None,fuel_id=None,fuel_type=None,fuel_octane_rating=None,food_id=None,food_type=None):
+        result = {}
         result['r_id'] = r_id
         result['r_type'] = r_type
         result['r_quantity'] = r_quantity
@@ -112,8 +114,8 @@ class ResourcesHandler:
         
         
     def getSuppliersByResourceId(self,r_id):
-        sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine',1,'777-127-8789' ,'starkiller@rebels.com')
-        sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant',1,'777-127-8889' ,'princess@rebels.com')
+        sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine','777-127-8789',1)
+        sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant','777-127-8889' ,1)
         resource = (2,'Batteries',5,'Mayaguez',5.0,True)
         supplier_list = {sup1,sup2}
         if not resource:
@@ -127,8 +129,8 @@ class ResourcesHandler:
 
 
     def getPersonByResourceId(self,r_id):
-        p1 = (1,'Joe','F','Chill','joe.chill@upr.edu','Jayuyas','1','7877787811')
-        p2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','2','9399399393')
+        p1 = (1,'Joe','F','Chill','joe.chill@upr.edu','Jayuyas','7877787811',1)
+        p2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','9399399393',2)
         resource = (2,'Batteries',5,'Mayaguez',5.0,True)
 
         person_list = {p1,p2}
@@ -162,11 +164,11 @@ class ResourcesHandler:
             
             if r_type and r_quantity and r_location and r_price and r_availability:
                 if water_type and measurement_unit:
-                    result = build_resource_attributes()
+                    result = self.build_resource_attributes()
                 if fuel_type and fuel_octane_rating:
-                    result = build_resource_attributes()
+                    result = self.build_resource_attributes()
                 if food_type:
-                    result = build_resource_attributes()
+                    result = self.build_resource_attributes()
 
                 return jsonify(Resource=result),201
             else:
@@ -190,11 +192,11 @@ class ResourcesHandler:
         
         if r_type and r_quantity and r_location and r_price and r_availability:
             if water_type and measurement_unit:
-                result = build_resource_attributes()
+                result = self.build_resource_attributes()
             if fuel_type and fuel_octane_rating:
-                result = build_resource_attributes()
+                result = self.build_resource_attributes()
             if food_type:
-                result = build_resource_attributes()
+                result = self.build_resource_attributes()
 
             return jsonify(Resource=result),201
         else:
