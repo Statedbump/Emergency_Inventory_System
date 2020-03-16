@@ -8,9 +8,8 @@ class PersonHandler:
         result['p_last_name'] = row[3]
         result['email'] = row[4]
         result['location_of_p'] = row[5]
-        result['login_id'] = row[6]
-        result['p_phone'] = row[7]
-
+        result['p_phone'] = row[6]
+        result['login_id'] = row[7]
         return result
 
     def build_resource_dict(self, row):
@@ -25,9 +24,9 @@ class PersonHandler:
 
     def getAllPerson(self):
 
-        person1 = (1,'Yetsiel','S','Aviles','yetsiel.aviles@upr.edu','Hormigueros','1','7877877878')
-        person2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','2','9399399393')
-        person_list = {person1,person2}
+        person1 = (1,'Yetsiel','S','Aviles','yetsiel.aviles@upr.edu','Hormigueros','1','7877877878',4)
+        person2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','2','9399399393',5)
+        person_list = {person1, person2}
         result_list = []
         for row in person_list:
             result = self.build_person_dict(row)
@@ -36,7 +35,7 @@ class PersonHandler:
 
     def getPersonById(self, pid):
 
-        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878')
+        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
         if not person1:
             return jsonify(Error="Person Not Found"), 404
         else:
@@ -44,7 +43,7 @@ class PersonHandler:
         return jsonify(Person=person)
 
     def getResourcesByPersonId(self, pid):
-        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878')
+        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
         resource1= (1,'Ice',1,'Mayaguez',1.0,True)
         resource2= (2,'Batteries',5,'Mayaguez',5.0,True)
         resources_list ={resource1,resource2}
@@ -63,8 +62,8 @@ class PersonHandler:
         else:
             location = args.get("location_of_p")
             if location:
-                person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878')
-                person2 = (2, 'Tito', 'M', 'Kayak', 'titokayak@gmail.com', 'San Juan', '2', '9399399393')
+                person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
+                person2 = (2, 'Tito', 'M', 'Kayak', 'titokayak@gmail.com', 'San Juan', '2', '9399399393',5)
                 person_list = {person1, person2}
                 result_list = []
                 for row in person_list:
@@ -81,10 +80,10 @@ class PersonHandler:
             plastname = form['p_last_name']
             email = form['email']
             plocation = form['location_of_p']
-            plogin = form['login_id']
             pphone = form['p_phone']
-            if pfirstname and plastname and pmiddleinitial and pphone and plogin and plocation and email:
-                row = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878')
+            loginID = form['login_id']
+            if pfirstname and plastname and pmiddleinitial and pphone and loginID and plocation and email:
+                row = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
                 result = {}
                 result['p_id'] = row[0]
                 result['p_first_name'] = row[1]
@@ -92,8 +91,8 @@ class PersonHandler:
                 result['p_last_name'] = row[3]
                 result['email'] = row[4]
                 result['location_of_p'] = row[5]
-                result['login_id'] = row[6]
-                result['p_phone'] = row[7]
+                result['p_phone'] = row[6]
+                result['login_id'] = row[7]
                 return jsonify(Person=result), 201
             else:
                 return jsonify(Error="Malformed post request")
