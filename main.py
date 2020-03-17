@@ -3,6 +3,8 @@ from handlers.personhandler import PersonHandler
 from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
 from handlers.resources import ResourcesHandler
+from handlers.loginhandler import LoginHandler
+
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -91,6 +93,12 @@ def getAdminByAdmId(adm_id):
 @app.route('/ERIApp/administrators/<int:adm_id>/resources')
 def getResourcesByAdminId(adm_id):
     return AdministratorHandler().getResourcesByAdminId(adm_id)
+
+#---------------Login-------------------
+@app.route('/ERIApp/login')
+def getAllLogin():
+    return LoginHandler().getAllLogin()
+
 
 #----->Resources<-----
 @app.route('/ERIApp/resources', methods=['GET', 'POST'])
