@@ -3,7 +3,7 @@ insert into supplier(first_name , middle_initial , last_name , company_name , wa
                      phone ,login_id )
                     values ('Yetsiel','S','Aviles','Plaza Provision Company','PPC 123', 'San Juan','7871234567',1);
 insert into resource(r_type ,r_quantity ,r_location ,r_price ,r_availability ) values('Batteries',6,'San Juan',5.00,True);
-insert into person(first_name , middle_initial ,last_name ,email ,location_of_p ,phone ,login_id )
+insert into person(first_name , middle_initial ,last_name ,email ,location_of_p ,phone ,login_id)
                     values ('Tito', 'M', 'Kayak','titokayak@gmail.com','Caguas','9399399999',2);
 insert into resource(r_type,r_quantity,r_location,r_price,r_availability) values('Water',10,'San Juan',4.00,True);
 insert into water(water_type,measurement_unit, r_id ) values('Small Bottles','ounces',2);
