@@ -22,10 +22,10 @@ class ResourcesDAO:
         cur = self.conn.cursor()
         q1 = "select resource_type from resource where r_id = %s;"
         cur.execute(q1,(r_id,))
-        material = cur1.fetchone()[0]
+        material = cur.fetchone()[0]
     
         if 'water' in material or 'fuel' in material or 'food' in material:
-            query = 'SELECT * FROM resource NATURAL JOIN '+ material+ ' WHERE r_id = %s;'
+            query = 'SELECT * FROM resource NATURAL INNER JOIN '+ material+ ' WHERE r_id = %s;'
             cur.execute(query, (r_id,))
             result = cur.fetchone()
         else:
