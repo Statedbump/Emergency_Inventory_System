@@ -49,7 +49,6 @@ class PersonHandler:
         resources_list ={resource1,resource2}
         if not person1:
             return jsonify(Error="Person Not Found"), 404
-
         result_list = []
         for row in resources_list:
             result = self.build_resource_dict(row)
