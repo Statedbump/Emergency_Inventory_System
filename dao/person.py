@@ -4,9 +4,10 @@ import psycopg2
 class PersonDAO:
     def __init__(self):
 
-        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
+        connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
                                                             pg_config['user'],
-                                                            pg_config['passwd'])
+                                                            pg_config['passwd'],
+                                                            pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
     def getAllPerson(self):
@@ -63,6 +64,15 @@ class PersonDAO:
             result.append(row)
         query = "select r_id, r_type, r_location, resource_total, o_date from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys where p_id =%s and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
         cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getPersonByLocation(self, location):
+        cursor = self.conn.cursor()
+        query = "select * from person where location_of_p = %s;"
+        cursor.execute(query, (location,))
+        result = []
         for row in cursor:
             result.append(row)
         return result
