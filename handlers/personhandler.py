@@ -17,10 +17,16 @@ class PersonHandler:
         result = {}
         result['r_id'] = row[0]
         result['r_type'] = row[1]
-        result['r_quantity'] = row[2]
-        result['r_location'] = row[3]
-        result['r_price'] = row[4]
-        result['r_availability'] = row[5]
+        result['r_location'] = row[2]
+        result['resource_total'] = row[3]
+        if result['r_type'] == 'Water':
+            result['water_type'] = row[4]
+            result['measurement_unit'] = row[5]
+        elif result['r_type'] == 'Fuel':
+            result['fuel_type'] = row[4]
+            result['fuel_octane_rating'] = row[5]
+        elif result['r_type'] == 'Food':
+            result['food_type'] = row[4]
         return result
 
     def getAllPerson(self):
@@ -105,11 +111,11 @@ class PersonHandler:
                 result['login_id'] = loginID
                 return jsonify(Person=result), 201
             else:
-                return jsonify(Error="Malformed post request")
+                return jsonify('Unexpected attributes in post request'), 401
         else:
-            return jsonify(Error="Malformed post request")
+            return jsonify(Error="Malformed post request"), 400
 
-    def deletePart(self, pid):
+    def deletePerson(self, pid):
         dao = PersonDAO()
         if not dao.getPersonById(pid):
             return jsonify(Error = "Person not found."), 404

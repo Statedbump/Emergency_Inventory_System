@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, render_template
 from handlers.personhandler import PersonHandler
 from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
-from handlers.resources import ResourcesHandler
+from handlers.resourcehandler import ResourcesHandler
 from handlers.loginhandler import LoginHandler
 
 # Import Cross-Origin Resource Sharing to enable
