@@ -115,6 +115,31 @@ class PersonHandler:
         else:
             return jsonify(Error="Malformed post request"), 400
 
+    def insertPersonJson(self, json):
+        pfirstname = json['first_name']
+        pmiddleinitial = json['middle_initial']
+        plastname = json['last_name']
+        email = json['email']
+        plocation = json['location_of_p']
+        pphone = json['phone']
+        loginID = json['login_id']
+        if pfirstname and plastname and pmiddleinitial and pphone and loginID and plocation and email:
+            #row = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
+            dao = PersonDAO()
+            pid = dao.insert(pfirstname, pmiddleinitial, plastname, email, plocation, pphone, loginID)
+            result = {}
+            result['p_id'] = pid
+            result['first_name'] = pfirstname
+            result['middle_initial'] = pmiddleinitial
+            result['last_name'] = plastname
+            result['email'] = email
+            result['location_of_p'] = plocation
+            result['phone'] = pphone
+            result['login_id'] = loginID
+            return jsonify(Person=result), 201
+        else:
+            return jsonify('Unexpected attributes in post request'), 401
+
     def deletePerson(self, pid):
         dao = PersonDAO()
         if not dao.getPersonById(pid):

@@ -15,7 +15,7 @@ app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
 
-@app.route('/ERIApp')
+@app.route('/')
 def login():
     return render_template("login.html")
 
@@ -43,9 +43,9 @@ def getPersonById(p_id):
     if request.method == 'GET':
         return PersonHandler().getPersonById(p_id)
     elif request.method == 'PUT':
-        pass
+        return PersonHandler().updatePerson(p_id, request.form)
     elif request.method == 'DELETE':
-        pass
+        return PersonHandler().deletePerson(p_id)
     else:
         return jsonify(Error = "Method not allowed"), 405
 
