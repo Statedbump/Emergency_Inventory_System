@@ -30,7 +30,7 @@ def signup():
 @app.route('/ERIApp/person', methods=['GET', 'POST'])
 def getAllPerson():
     if request.method == 'POST':
-        return PersonHandler().insertPerson(request.form)
+        return PersonHandler().insertPersonJson(request.json)
     else :
         if not request.args:
             return PersonHandler().getAllPerson()
