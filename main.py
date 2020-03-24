@@ -58,7 +58,7 @@ def getResourcesByPersonId(p_id):
 @app.route('/ERIApp/suppliers', methods=['GET', 'POST'])
 def getAllSuppliers():
     if request.method == 'POST':
-        return supplierHandler().insertSupplier(request.form)
+        return supplierHandler().insertSupplierJson(request.json)
     else :
         if not request.args:
             return supplierHandler().getAllSuppliers()
