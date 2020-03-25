@@ -42,7 +42,6 @@ class PersonHandler:
         return jsonify(PersonList=result_list)
 
     def getPersonById(self, pid):
-
         #person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
         dao = PersonDAO()
         person1 = dao.getPersonById(pid)
@@ -51,6 +50,19 @@ class PersonHandler:
         else:
             person = self.build_person_dict(person1)
         return jsonify(Person=person)
+
+    def getPersonByLocation(self, location):
+        #person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
+        dao = PersonDAO()
+        person_list = dao.getPersonByLocation(location)
+        if not person_list:
+            return jsonify(Error="Person Not Found"), 404
+        else:
+            result_list = []
+            for row in person_list:
+                result = self.build_person_dict(row)
+                result_list.append(result)
+            return jsonify(PersonList=result_list)
 
     def getResourcesByPersonId(self, pid):
         #person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
