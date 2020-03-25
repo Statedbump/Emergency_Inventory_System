@@ -4,9 +4,10 @@ import psycopg2
 class PersonDAO:
     def __init__(self):
 
-        connection_url = "dbname=%s user=%s password=%s" % (pg_config['dbname'],
+        connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
                                                             pg_config['user'],
-                                                            pg_config['passwd'])
+                                                            pg_config['passwd'],
+                                                            pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
     def getAllPerson(self):
@@ -29,40 +30,49 @@ class PersonDAO:
         cursor = self.conn.cursor()
         #Requested resources
         result = []
-        query = "select r_id, r_type, water_type, measurement_unit, r_location, resource_total, request_date from resource natural inner join person natural inner join requests natural inner join water where p_id =%s and r_type ='Water';"
+        query = "select r_id, r_type,r_location, resource_total, water_type, measurement_unit  from resource natural inner join person natural inner join requests natural inner join water where p_id =%s and r_type ='Water';"
         cursor.execute(query, (p_id,))
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, fuel_type, fuel_octane_rating, r_location, resource_total, request_date from resource natural inner join person natural inner join requests natural inner join fuel where p_id =%s and r_type ='Fuel';"
+        query = "select r_id, r_type, r_location, resource_total, fuel_type, fuel_octane_rating from resource natural inner join person natural inner join requests natural inner join fuel where p_id =%s and r_type ='Fuel';"
         cursor.execute(query, (p_id,))
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, food_type, r_location, resource_total, request_date from resource natural inner join person natural inner join requests natural inner join food where p_id =%s and r_type ='Food';"
+        query = "select r_id, r_type, r_location, resource_total, food_type from resource natural inner join person natural inner join requests natural inner join food where p_id =%s and r_type ='Food';"
         cursor.execute(query, (p_id,))
         result = []
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, r_location, resource_total, request_date from resource natural inner join person natural inner join requests where p_id =1 and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
+        query = "select r_id, r_type, r_location, resource_total from resource natural inner join person natural inner join requests where p_id =1 and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
         cursor.execute(query, (p_id,))
         result = []
         for row in cursor:
             result.append(row)
 
         #Bought resources
-        query = "select r_id, r_type, water_type, measurement_unit, r_location, resource_total, o_date from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join water where p_id =%s and r_type ='Water';"
+        query = "select r_id, r_type, r_location, resource_total, water_type, measurement_unit from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join water where p_id =%s and r_type ='Water';"
         cursor.execute(query, (p_id,))
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, fuel_type, fuel_octane_rating, r_location, resource_total, o_date from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join fuel where p_id =%s and r_type ='Fuel';"
+        query = "select r_id, r_type, r_location, resource_total, fuel_type, fuel_octane_rating from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join fuel where p_id =%s and r_type ='Fuel';"
         cursor.execute(query, (p_id,))
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, food_type, r_location, resource_total, o_date from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join food where p_id =%s and r_type ='Food';"
+        query = "select r_id, r_type, r_location, resource_total, food_type from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys natural inner join food where p_id =%s and r_type ='Food';"
         cursor.execute(query, (p_id,))
         for row in cursor:
             result.append(row)
-        query = "select r_id, r_type, r_location, resource_total, o_date from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys where p_id =%s and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
+        query = "select r_id, r_type, r_location, resource_total from resource natural inner join person natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys where p_id =%s and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
         cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getPersonByLocation(self, location):
+        cursor = self.conn.cursor()
+        query = "select * from person where location_of_p = %s;"
+        cursor.execute(query, (location,))
+        result = []
         for row in cursor:
             result.append(row)
         return result
