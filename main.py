@@ -31,7 +31,7 @@ def signup():
 def getAllPerson():
     if request.method == 'POST':
         return PersonHandler().insertPerson(request.form)
-    else :
+    else:
         if not request.args:
             return PersonHandler().getAllPerson()
         else:
