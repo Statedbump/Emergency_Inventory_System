@@ -1,4 +1,5 @@
 from flask import jsonify
+from dao.supplier import SupplierDAO
 
 class supplierHandler:
 
@@ -18,38 +19,64 @@ class supplierHandler:
     def build_resource_dict(self, row):
         result = {}
         result['r_id'] = row[0]
-        result['resource_type'] = row[1]
-        result['quantity'] = row[2]
-        result['res_location'] = row[3]
-        result['r_price'] = row[4]
-        result['r_availability'] = row[5]
+        result['r_type'] = row[1]
+        result['r_location'] = row[2]
+        result['resource_total'] = row[3]
+        if result['r_type'] == 'Water':
+            result['water_type'] = row[4]
+            result['measurement_unit'] = row[5]
+        elif result['r_type'] == 'Fuel':
+            result['fuel_type'] = row[4]
+            result['fuel_octane_rating'] = row[5]
+        elif result['r_type'] == 'Food':
+            result['food_type'] = row[4]
         return result
 
     def getAllSuppliers(self):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-        sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
-        suppliers_list = {sup1, sup2}
+        #sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+        #sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
+        #suppliers_list = {sup1, sup2}
+        dao = SupplierDAO()
+        suppliers_list = dao.getAllSuppliers()
         result_list = []
         for row in suppliers_list:
             result = self.build_supplier_dict(row)
             result_list.append(result)
-        return jsonify(PersonList=result_list)
+        return jsonify(SupplierList=result_list)
 
     def getSupplierById(self, pid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+        #sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+        dao = SupplierDAO()
+        sup1 = dao.getSupplierById(pid)
         if not sup1:
-            return jsonify(Error="Person Not Found"), 404
+            return jsonify(Error="Supplier Not Found"), 404
         else:
-            person = self.build_supplier_dict(sup1)
-        return jsonify(Person=person)
+            supplier = self.build_supplier_dict(sup1)
+        return jsonify(Supplier = supplier)
+
+    def getSupplierByLocation(self, location):
+        #sup1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
+        dao = SupplierDAO()
+        supplier_list = dao.getSupplierByLocation(location)
+        if not supplier_list:
+            return jsonify(Error="Supplier Not Found"), 404
+        else:
+            result_list = []
+            for row in supplier_list:
+                result = self.build_person_dict(row)
+                result_list.append(result)
+            return jsonify(SupplierList=result_list)
 
     def getResourcesBySupplierId(self, pid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-        resource1= (1,'Ice',1,'Mayaguez',1.0,True)
-        resource2= (2,'Batteries',5,'Mayaguez',5.0,True)
-        resources_list ={resource1,resource2}
+        #sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+        #resource1= (1,'Ice',1,'Mayaguez',1.0,True)
+        #resource2= (2,'Batteries',5,'Mayaguez',5.0,True)
+        #resources_list ={resource1,resource2}
+        dao = SupplierDAO()
+        sup1 = dao.getSupplierById(pid)
         if not sup1:
-            return jsonify(Error="Person Not Found"), 404
+            return jsonify(Error="Supplier Not Found"), 404
+        resources_list = dao.getResourcesBySupplierId(pid)
         result_list = []
         for row in resources_list:
             result = self.build_resource_dict(row)
@@ -62,9 +89,11 @@ class supplierHandler:
         else:
             location = args.get("location_of_p")
             if location:
-                sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-                sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
-                person_list = {sup1, sup2}
+                #sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+                #sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
+                #person_list = {sup1, sup2}
+                dao = SupplierDAO()
+                person_list = dao.getPersonByLocation(location)
                 result_list = []
                 for row in person_list:
                     result = self.build_supplier_dict(row)

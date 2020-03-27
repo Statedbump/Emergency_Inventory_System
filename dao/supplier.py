@@ -1,4 +1,4 @@
-from config.dbconfig import pg_config
+from config.rexdbconfig import pg_config
 import psycopg2
 
 class SupplierDAO:
@@ -10,7 +10,7 @@ class SupplierDAO:
                                                             pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllSupplier(self):
+    def getAllSuppliers(self):
         cursor = self.conn.cursor()
         query = "select * from supplier;"
         cursor.execute(query)
@@ -64,6 +64,15 @@ class SupplierDAO:
             result.append(row)
         query = "select r_id, r_type, r_location, resource_total, o_date from resource natural inner join supplier natural inner join offers natural inner join payment natural inner join resource_order natural inner join buys where s_id =%s and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
         cursor.execute(query, (s_id,))
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getSupplierByLocation(self, location):
+        cursor = self.conn.cursor()
+        query = "select * from supplier where supplier_location = %s;"
+        cursor.execute(query, (location,))
+        result = []
         for row in cursor:
             result.append(row)
         return result
