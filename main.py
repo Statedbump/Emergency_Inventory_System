@@ -55,7 +55,7 @@ def getResourcesByPersonId(p_id):
 
 
 #------Supplier--------
-@app.route('/ERIApp/suppliers', methods=['GET', 'POST'])
+@app.route('/ERIApp/supplier', methods=['GET', 'POST'])
 def getAllSuppliers():
     if request.method == 'POST':
         return supplierHandler().insertSupplierJson(request.json)
@@ -65,7 +65,7 @@ def getAllSuppliers():
         else:
             return supplierHandler().searchSupplier(request.args)
 
-@app.route('/ERIApp/suppliers/<int:p_id>',
+@app.route('/ERIApp/supplier/<int:p_id>',
            methods=['GET', 'PUT', 'DELETE'])
 def getSupplierById(p_id):
     if request.method == 'GET':
@@ -77,7 +77,7 @@ def getSupplierById(p_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/ERIApp/suppliers/<int:p_id>/resources')
+@app.route('/ERIApp/supplier/<int:p_id>/resources')
 def getResourcesBySupplierId(p_id):
     return supplierHandler().getResourcesBySupplierId(p_id)
 
