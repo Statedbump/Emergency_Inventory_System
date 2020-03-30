@@ -87,7 +87,7 @@ class supplierHandler:
         if len(args) > 1:
             return jsonify(Error = "Malformed search string."), 400
         else:
-            location = args.get("location_of_p")
+            location = args.get("supplier_location")
             if location:
                 #sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
                 #sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
@@ -104,69 +104,70 @@ class supplierHandler:
 
     def insertSupplier(self, form):
         if form and len(form) == 8:
-            sfirstname = form['s_first_name']
-            smiddleinitial = form['s_middle_initial']
-            slastname = form['s_last_name']
-            slocation = form['s_location']
+            sfirstname = form['first_name']
+            smiddleinitial = form['middle_initial']
+            slastname = form['last_name']
             companyname = form['company_name']
             warehouseaddress = form['warehouse_address']
-            sphone = form['s_phone']
+            slocation = form['supplier_location']
+            sphone = form['phone']
             loginID = form['login_id']
-            if sfirstname and slastname and smiddleinitial and slocation\
-                    and companyname and warehouseaddress and sphone and loginID:
-                row = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+            if sfirstname and slastname and smiddleinitial and companyname and warehouseaddress and slocation and sphone and loginID:
+                #row = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
+                dao = SupplierDAO()
+                sid = dao.insert(sfirstname, smiddleinitial, slastname, slocation, companyname, warehouseaddress, sphone, loginID)
                 result = {}
-                result['p_id'] = row[0]
-                result['p_first_name'] = row[1]
-                result['p_middle_initial'] = row[2]
-                result['p_last_name'] = row[3]
-                result['email'] = row[4]
-                result['location_of_p'] = row[5]
-                result['login_id'] = row[6]
-                result['p_phone'] = row[7]
-                result['login_id'] = row[8]
-                return jsonify(Person=result), 201
+                result['s_id'] = sid
+                result['first_name'] = sfirstname
+                result['middle_initial'] = smiddleinitial
+                result['last_name'] = slastname
+                result['company_name'] = companyname
+                result['warehouse_address'] = warehouseaddress
+                result['supplier_location'] = slocation
+                result['phone'] = sphone
+                result['login_id'] = loginID
+                return jsonify(Supplier=result), 201
             else:
-                return jsonify(Error="Malformed post request.")
+                return jsonify(Error="Unexpected attributes in post request.")
         else:
-            return jsonify(Error="Malformed post request.")
+            return jsonify(Error="Malformed post request."), 400
 
-        def deleteSupplier(self, sid):
-            dao = SupplierDAO()
-            if not dao.getSupplierById(sid):
-                return jsonify(Error="Supplier not found."), 404
-            else:
-                dao.delete(sid)
-                return jsonify(DeleteStatus="OK"), 200
+    def deleteSupplier(self, sid):
+        dao = SupplierDAO()
+        if not dao.getSupplierById(sid):
+            return jsonify(Error="Supplier not found."), 404
+        else:
+            dao.delete(sid)
+            return jsonify(DeleteStatus="OK"), 200
 
-        def updatePerson(self, sid, form):
-            dao = SupplierDAO()
-            if not dao.getSupplierById(sid):
-                return jsonify(Error="Supplier not found."), 404
+    def updateSupplier(self, sid, form):
+        dao = SupplierDAO()
+        if not dao.getSupplierById(sid):
+            return jsonify(Error="Supplier not found."), 404
+        else:
+            if len(form) != 8:
+                return jsonify(Error="Malformed update request"), 400
             else:
-                if len(form) != 8:
-                    return jsonify(Error="Malformed update request"), 400
+                sfirstname = form['first_name']
+                smiddleinitial = form['middle_initial']
+                slastname = form['last_name']
+                companyname = form['company_name']
+                warehouseaddress = form['warehouse_address']
+                slocation = form['supplier_location']
+                sphone = form['phone']
+                loginID = form['login_id']
+                if sfirstname and smiddleinitial and slastname and slocation and companyname and warehouseaddress and sphone and loginID:
+                    dao.update(sid, sfirstname, smiddleinitial, slastname, slocation, companyname, warehouseaddress, sphone, loginID)
+                    result = {}
+                    result['s_id'] = sid
+                    result['first_name'] = sfirstname
+                    result['middle_initial'] = smiddleinitial
+                    result['last_name'] = slastname
+                    result['company_name'] = companyname
+                    result['warehouse_address'] = warehouseaddress
+                    result['supplier_location'] = slocation
+                    result['phone'] = sphone
+                    result['login_id'] = loginID
+                    return jsonify(Supplier=result), 200
                 else:
-                    sfirstname = form['first_name']
-                    smiddleinitial = form['middle_initial']
-                    slastname = form['last_name']
-                    slocation = form['s_location']
-                    companyname = form['company_name']
-                    warehouseaddress = form['warehouse_address']
-                    sphone = form['s_phone']
-                    loginID = form['login_id']
-                    if sfirstname and smiddleinitial and slastname and slocation and companyname and warehouseaddress and sphone and loginID:
-                        dao.update(sid, sfirstname, smiddleinitial, slastname, slocation, companyname, warehouseaddress, sphone, loginID)
-                        result = {}
-                        result['s_id'] = sid
-                        result['first_name'] = sfirstname
-                        result['middle_initial'] = smiddleinitial
-                        result['last_name'] = slastname
-                        result['s_location'] = slocation
-                        result['company_name'] = companyname
-                        result['warehouse_address'] = warehouseaddress
-                        result['s_phone'] = sphone
-                        result['login_id'] = loginID
-                        return jsonify(Supplier=result), 200
-                    else:
-                        return jsonify(Error="Unexpected attributes in update request"), 400
+                    return jsonify(Error="Unexpected attributes in update request"), 400
