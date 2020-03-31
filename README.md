@@ -1,3 +1,9 @@
+## Contributors:
+Yetsiel S. Aviles Bracero
+Jose A. Melendez Morales
+Luis M. Cintron Zayas
+Rex J. Reyes Rodriguez
+
 # Emergency Inventory System
 A simple web based inventory system for natural disaster emergencies in the island of Puerto Rico.
 ## How to run temporary UI ##
