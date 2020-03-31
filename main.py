@@ -26,6 +26,9 @@ def landing():
 @app.route('/ERIApp/signup')
 def signup():
     return render_template("signup.html")
+
+
+
 #-----Person------
 @app.route('/ERIApp/person', methods=['GET', 'POST'])
 def getAllPerson():
@@ -48,6 +51,10 @@ def getPersonById(p_id):
         return PersonHandler().deletePerson(p_id)
     else:
         return jsonify(Error = "Method not allowed"), 405
+
+@app.route('/ERIApp/person/<int:p_id>/resources')
+def getResourcesByPersonId(p_id):
+    return PersonHandler().getResourcesByPersonId(p_id)
 
 
 
@@ -78,6 +85,8 @@ def getSupplierById(s_id):
 def getResourcesBySupplierId(p_id):
     return supplierHandler().getResourcesBySupplierId(p_id)
 
+
+
 #-----Admin------
 @app.route('/ERIApp/administrators')
 def getAllAdmin():
@@ -91,10 +100,13 @@ def getAdminByAdmId(adm_id):
 def getResourcesByAdminId(adm_id):
     return AdministratorHandler().getResourcesByAdminId(adm_id)
 
+
+
 #---------------Login-------------------
 @app.route('/ERIApp/login')
 def getAllLogin():
     return LoginHandler().getAllLogin()
+
 
 
 #----->Resources<-----
@@ -127,6 +139,8 @@ def getPersonByResourceId(r_id):
 @app.route('/ERIApp/resources/<int:r_id>/supplier')
 def getSupplierByResourceId(r_id):
     return ResourcesHandler().getSuppliersByResourceId(r_id) 
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
