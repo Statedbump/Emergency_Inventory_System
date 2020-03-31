@@ -1,4 +1,4 @@
-from config.dbconfig import pg_config
+from config.rexdbconfig import pg_config
 import psycopg2
 
 class SupplierDAO:
@@ -10,7 +10,7 @@ class SupplierDAO:
                                                             pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllSupplier(self):
+    def getAllSuppliers(self):
         cursor = self.conn.cursor()
         query = "select * from supplier;"
         cursor.execute(query)
@@ -68,10 +68,19 @@ class SupplierDAO:
             result.append(row)
         return result
 
-    def insert(self, first_name, middle_initial, last_name, location_of_s, company_name, warehouse_address, phone, login_id):
+    def getSupplierByLocation(self, location):
         cursor = self.conn.cursor()
-        query = "insert into supplier(first_name, middle_initial, last_name, location_of_s, company_name, warehouse_address, phone, login_id) values (%s, %s, %s, %s, %s, %s, %s, %s) returning s_id;"
-        cursor.execute(query, (first_name, middle_initial, last_name, location_of_s, company_name, warehouse_address, phone, login_id))
+        query = "select * from supplier where supplier_location = %s;"
+        cursor.execute(query, (location,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def insert(self, first_name, middle_initial, last_name, company_name, warehouse_address, supplier_location, phone, login_id):
+        cursor = self.conn.cursor()
+        query = "insert into supplier(first_name, middle_initial, last_name, company_name, warehouse_address, supplier_location, phone, login_id) values (%s, %s, %s, %s, %s, %s, %s, %s) returning s_id;"
+        cursor.execute(query, (first_name, middle_initial, last_name, company_name, warehouse_address, supplier_location, phone, login_id))
         s_id = cursor.fetchone()[0]
         self.conn.commit()
         return s_id
@@ -83,9 +92,9 @@ class SupplierDAO:
         self.conn.commit()
         return s_id
 
-    def update(self, s_id, first_name, middle_initial, last_name, location_of_s, company_name, warehouse_address, phone, login_id):
+    def update(self, s_id, first_name, middle_initial, last_name, company_name, warehouse_address, supplier_location, phone, login_id):
         cursor = self.conn.cursor()
-        query = "update supplier set first_name = %s, middle_initial = %s, last_name = %s,location_of_s = %s, company_name = %s, warehouse_address = %s, phone = %s, login_id = %s where s_id = %s;"
-        cursor.execute(query, (first_name, middle_initial, last_name, location_of_s, company_name, warehouse_address, phone, login_id, s_id,))
+        query = "update supplier set first_name = %s, middle_initial = %s, last_name = %s, company_name = %s, warehouse_address = %s, supplier_location = %s, phone = %s, login_id = %s where s_id = %s;"
+        cursor.execute(query, (first_name, middle_initial, last_name, company_name, warehouse_address, supplier_location, phone, login_id, s_id,))
         self.conn.commit()
         return s_id

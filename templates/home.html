@@ -26,17 +26,23 @@
         </form> <br>
 
         Supplier Handlers: <br>
-        <form action = "/ERIApp/suppliers" method = "get">
+        <form action = "/ERIApp/supplier" method = "get">
             <input type ="submit" value="Show all suppliers">
         </form>
-        <form action = "/ERIApp/suppliers" method = "post">
-            <input type ="submit" value="Add a supplier">
-        </form>
-        <form action = "/ERIApp/suppliers/1" method = "get">
+        <form action = "/ERIApp/supplier/1" method = "get">
             <input type ="submit" value="Show supplier with id=1">
         </form>
-        <form action = "/ERIApp/suppliers/1/resources" method = "get">
+        <form action = "/ERIApp/supplier/1/resources" method = "get">
             <input type ="submit" value="Show resources for supplier with id=1">
+        </form>
+        <form action = "/ERIApp/supplier" method = "post">
+            <input type ="submit" value="Add a supplier">
+        </form>
+        <form action = "/ERIApp/supplier/1" method = "delete">
+            <input type ="submit" value="Delete a supplier">
+        </form>
+        <form action = "/ERIApp/supplier/1" method = "put">
+            <input type ="submit" value="Update a supplier">
         </form> <br>
 
         Resourse Handlers: <br>
