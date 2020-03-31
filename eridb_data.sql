@@ -1,4 +1,5 @@
 insert into login(username, password) values ('Yetsiel123', 'ciic');
+insert into login(username, password) values ('miguelc', 'cotto');
 insert into supplier(first_name , middle_initial , last_name , company_name , warehouse_address ,supplier_location ,
                      phone ,login_id )
                     values ('Yetsiel','S','Aviles','Plaza Provision Company','PPC 123', 'San Juan','7871234567',1);

@@ -1,6 +1,6 @@
 pg_config = {
-    'user' : 'projectuser',
-    'passwd' : 'icom5016',
+    'user' : 'rexkater',
+    'passwd' : 'Jahdrex8',
     'dbname' : 'eridb',
     'host' : 'localhost'
 }
