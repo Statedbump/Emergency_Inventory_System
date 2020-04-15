@@ -1,5 +1,5 @@
 from flask import jsonify
-#from dao.resources import ResourcesDAO
+from dao.resources import ResourcesDAO
 
 class ResourcesHandler:
     def build_resource_dict(self,row):
@@ -11,7 +11,14 @@ class ResourcesHandler:
         result['r_price'] = row[4]
         result['r_availability'] = row[5]
 
+    def build_resources_by_senate_region_dict(self, row):
+        result = {}
+        result['r_id'] = row[0]
+        result['r_type'] = row[1]
+        result['senate_region'] = row[2]
         return result
+
+
         ##Specializations NEEDED??
 
     def build_supplier_dict(self, row):
@@ -72,7 +79,23 @@ class ResourcesHandler:
             result_list.append(result)
         return jsonify(ResourceList=result_list)
 
+    def getResourcesInNeedBySenateRegion(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesInNeedBySenateRegion()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_by_senate_region_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesInNeedBySenateRegion=result_list)
 
+    def getResourcesAvailableBySenateRegion(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesAvailableBySenateRegion()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_by_senate_region_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesAvailableBySenateRegion=result_list)
         
     def getResourceById(self,r_id):
         r1=(1,'batteries',10,'San Juan',10.0,True) 

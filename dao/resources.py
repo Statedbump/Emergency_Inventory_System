@@ -3,12 +3,13 @@ import psycopg2
 
 class ResourcesDAO:
     def __init__(self):
-        connection_url = "dbname=%s user=%s host=%s password=%s" % (pg_config['dbname'],
+
+        connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
                                                             pg_config['user'],
-                                                            pg_config['host']
-                                                            pg_config['passwd'])
-        self.conn = psycopg2._connect(connection_url)   
-    """"Fix to make so resources that are generalized like fuel and water get joind and showned get joinced too """"
+                                                            pg_config['passwd'],
+                                                            pg_config['host'])
+        self.conn = psycopg2._connect(connection_url)
+
     def getAllResources(self):
         cursor = self.conn.cursor()
         query = 'SELECT * FROM resource NATURAL JOIN water NATURAL JOIN fuel NATURAL JOIN food;'
@@ -63,6 +64,23 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+    def getResourcesInNeedBySenateRegion(self):
+        cur = self.conn.cursor()
+        query = 'SELECT requests.r_id, r_type, get_senate_region(r_location) as senate_region from resource, requests where resource.r_id = requests.r_id group by senate_region, requests.r_id, r_type order by senate_region; '
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourcesAvailableBySenateRegion(self):
+        cur = self.conn.cursor()
+        query = 'SELECT resource.r_id, r_type, get_senate_region(r_location) as senate_region from resource where r_availability = true group by senate_region, resource.r_id, r_type order by senate_region; '
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
 
     """
     This can be made into a SQL function for faster functionality
@@ -84,6 +102,7 @@ class ResourcesDAO:
         return result
 
     
+    """
     #here we don not need all info of generalized resources
     def getResourcesByAvailability(self,availability = TRUE):
         cur = self.conn.cursor()
@@ -93,11 +112,12 @@ class ResourcesDAO:
         for row in cur:
             result.append(row)
         return result
+    """
     
     """
       This query function will get resources by priced 
       but it will also query the resources the are less or equal to that price
-    """
+    
     def getResourceByPrice(self,price):
         cur = self.conn.cursor()
         query ="SELECT * FROM resource  ORDER BY r_type ASC WHERE r_price < = %f;"
@@ -107,4 +127,4 @@ class ResourcesDAO:
         query = 'SELECT supplier_id,first_name,middle_initial, last_name,company_name, phone,email,supplier_location  FROM resource NATURAL supplier NATURAL JOIN supplies WHERE PID = %s'
         cur.execute(query(r_id,))
 
-    
+    """
