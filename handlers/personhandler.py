@@ -29,6 +29,27 @@ class PersonHandler:
             result['food_type'] = row[4]
         return result
 
+    def build_requested_resource_dict(self, row):
+        result = {}
+        result['r_id'] = row[0]
+        result['r_type'] = row[1]
+        result['r_location'] = row[2]
+        result['r_quantity'] = row[3]
+        if result['r_type'] == 'Water':
+            result['water_type'] = row[4]
+            result['measurement_unit'] = row[5]
+            result['r_availability'] = row[6]
+        elif result['r_type'] == 'Fuel':
+            result['fuel_type'] = row[4]
+            result['fuel_octane_rating'] = row[5]
+            result['r_availability'] = row[6]
+        elif result['r_type'] == 'Food':
+            result['food_type'] = row[4]
+            result['r_availability'] = row[5]
+        else:
+            result['r_availability'] = row[4]
+        return result
+
     def getAllPerson(self):
         dao = PersonDAO()
         person_list = dao.getAllPerson()
@@ -70,6 +91,19 @@ class PersonHandler:
             result = self.build_resource_dict(row)
             result_list.append(result)
         return jsonify(ResourcesByPersonID=result_list)
+
+    def getRequestedResourcesByPersonId(self, p_id):
+        dao = PersonDAO()
+        person1 = dao.getPersonById(p_id)
+        if not person1:
+            return jsonify(Error="Person Not Found"), 404
+        resources_list = dao.getRequestedResourcesByPersonId(p_id)
+        result_list = []
+        for row in resources_list:
+            result = self.build_requested_resource_dict(row)
+            result_list.append(result)
+        return jsonify(RequestedResourcesByPersonID=result_list)
+
 
     def searchPerson(self, args):
         if len(args) > 1:

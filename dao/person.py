@@ -40,12 +40,10 @@ class PersonDAO:
             result.append(row)
         query = "select r_id, r_type, r_location, resource_total, food_type from resource natural inner join person natural inner join reserves natural inner join food where p_id =%s and r_type ='Food';"
         cursor.execute(query, (p_id,))
-        result = []
         for row in cursor:
             result.append(row)
         query = "select r_id, r_type, r_location, resource_total from resource natural inner join person natural inner join reserves where p_id =1 and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
         cursor.execute(query, (p_id,))
-        result = []
         for row in cursor:
             result.append(row)
 
@@ -98,3 +96,25 @@ class PersonDAO:
         cursor.execute(query, (first_name, middle_initial, last_name, email, location_of_p, phone, login_id, p_id,))
         self.conn.commit()
         return p_id
+
+    def getRequestedResourcesByPersonId(self, p_id):
+        cursor = self.conn.cursor()
+        # Requested resources
+        result = []
+        query = "select r_id, r_type,r_location, r_quantity, water_type, measurement_unit, r_availability   from resource natural inner join person natural inner join requests natural inner join water where p_id =%s and r_type ='Water';"
+        cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_location, r_quantity, fuel_type, fuel_octane_rating,r_availability from resource natural inner join person natural inner join requests natural inner join fuel where p_id =%s and r_type ='Fuel';"
+        cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_location, r_quantity, food_type,r_availability from resource natural inner join person natural inner join requests natural inner join food where p_id =%s and r_type ='Food';"
+        cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_location, r_quantity,r_availability from resource natural inner join person natural inner join requests where p_id =1 and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
+        cursor.execute(query, (p_id,))
+        for row in cursor:
+            result.append(row)
+        return result

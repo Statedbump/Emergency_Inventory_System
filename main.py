@@ -57,6 +57,11 @@ def getResourcesByPersonId(p_id):
     return PersonHandler().getResourcesByPersonId(p_id)
 
 
+@app.route('/ERIApp/person/<int:p_id>/requests')
+def getRequestedResourcesByPersonId(p_id):
+    return PersonHandler().getRequestedResourcesByPersonId(p_id)
+
+
 
 #------Supplier--------
 @app.route('/ERIApp/supplier', methods=['GET', 'POST'])
