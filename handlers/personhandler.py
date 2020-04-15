@@ -30,11 +30,8 @@ class PersonHandler:
         return result
 
     def getAllPerson(self):
-        #dao = PersonDAO()
-        #person_list = dao.getAllPerson()
-        person1 = (1,'Yetsiel','S','Aviles','yetsiel.aviles@upr.edu','Hormigueros','7877877878',4)
-        person2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','9399399393',5)
-        person_list = {person1, person2}
+        dao = PersonDAO()
+        person_list = dao.getAllPerson()
         result_list = []
         for row in person_list:
             result = self.build_person_dict(row)
@@ -42,9 +39,8 @@ class PersonHandler:
         return jsonify(PersonList=result_list)
 
     def getPersonById(self, pid):
-        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
-        #dao = PersonDAO()
-        #person1 = dao.getPersonById(pid)
+        dao = PersonDAO()
+        person1 = dao.getPersonById(pid)
         if not person1:
             return jsonify(Error="Person Not Found"), 404
         else:
@@ -52,9 +48,8 @@ class PersonHandler:
         return jsonify(Person=person)
 
     def getPersonByLocation(self, location):
-        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
-        #dao = PersonDAO()
-        #person_list = dao.getPersonByLocation(location)
+        dao = PersonDAO()
+        person_list = dao.getPersonByLocation(location)
         if not person_list:
             return jsonify(Error="Person Not Found"), 404
         else:
@@ -65,15 +60,11 @@ class PersonHandler:
             return jsonify(PersonList=result_list)
 
     def getResourcesByPersonId(self, pid):
-        person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
-        resource1= (1,'Ice',1,'Mayaguez',1.0,True)
-        resource2= (2,'Batteries',5,'Mayaguez',5.0,True)
-        resources_list ={resource1,resource2}
-        #dao = PersonDAO()
-        #person1 = dao.getPersonById(pid)
+        dao = PersonDAO()
+        person1 = dao.getPersonById(pid)
         if not person1:
             return jsonify(Error="Person Not Found"), 404
-        #resources_list = dao.getResourcesByPersonId(pid)
+        resources_list = dao.getResourcesByPersonId(pid)
         result_list = []
         for row in resources_list:
             result = self.build_resource_dict(row)
@@ -86,11 +77,8 @@ class PersonHandler:
         else:
             location = args.get("location_of_p")
             if location:
-                person1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
-                person2 = (2, 'Tito', 'M', 'Kayak', 'titokayak@gmail.com', 'Hormigueros', '9399399393',5)
-                person_list = {person1, person2}
-                #dao = PersonDAO()
-                #person_list = dao.getPersonByLocation(location)
+                dao = PersonDAO()
+                person_list = dao.getPersonByLocation(location)
                 result_list = []
                 for row in person_list:
                     result = self.build_person_dict(row)
@@ -109,7 +97,6 @@ class PersonHandler:
             pphone = form['phone']
             loginID = form['login_id']
             if pfirstname and plastname and pmiddleinitial and pphone and loginID and plocation and email:
-                #row = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '7877877878',4)
                 dao = PersonDAO()
                 pid = dao.insert(pfirstname, pmiddleinitial, plastname, email, plocation, pphone, loginID)
                 result = {}

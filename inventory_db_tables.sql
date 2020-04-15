@@ -20,8 +20,10 @@ create table resource_order(o_id serial primary key,o_date DATE,o_quantity integ
 /* Relations*/
 create table supplies(supplier_id integer references supplier(supplier_id),
 		      r_id integer references resource(r_id),supplyin_date DATE , primary key(supplier_id,r_id));
-create table requests(p_id integer references person(p_id),r_id integer references resource(r_id) 
-		      ,request_date DATE, resource_total integer, primary key(p_id,r_id));
+create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id)
+		      ,reserve_date DATE, resource_total integer, primary key(p_id,r_id));
+create table requests(p_id integer references person(p_id),r_id integer references resource(r_id)
+		      ,request_date DATE, primary key(p_id,r_id));
 create table manages(admin_id integer references administrator(admin_id), r_id integer references resource(r_id));
 create table buys(r_id integer references resource(r_id), o_id integer references resource_order(o_id),total_price float, resource_total integer,
 		 primary key(r_id,o_id));
