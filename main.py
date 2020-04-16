@@ -125,6 +125,22 @@ def getAllResources():
         else:
             return ResourcesHandler().searchResource(request.args)
 
+@app.route('/ERIApp/resources/requests', methods=['GET'])
+def getAllResourcesRequests():
+    return ResourcesHandler().getAllResourcesRequests()
+
+@app.route('/ERIApp/resources/requests/SortByResourceName', methods=['GET'])
+def sortResourcesRequestsByResourceName():
+    return ResourcesHandler().sortResourcesRequestsByResourceName()
+
+@app.route('/ERIApp/resources/available', methods=['GET'])
+def getAllResourcesAvailable():
+    return ResourcesHandler().getAllResourcesAvailable()
+
+@app.route('/ERIApp/resources/available/SortByResourceName', methods=['GET'])
+def sortResourcesAvailableByResourceName():
+    return ResourcesHandler().sortResourcesAvailableByResourceName()
+
 @app.route('/ERIApp/resources/NeedBySenateRegion', methods=['GET'])
 def getResourcesInNeedBySenateRegion():
     return ResourcesHandler().getResourcesInNeedBySenateRegion()

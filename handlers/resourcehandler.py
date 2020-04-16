@@ -10,6 +10,21 @@ class ResourcesHandler:
         result['r_location'] = row[3]
         result['r_price'] = row[4]
         result['r_availability'] = row[5]
+        return result
+
+    def build_resources_requests_dict(self,row):
+        result = {}
+        result['p_id'] = row[0]
+        result['r_id'] = row[1]
+        result['r_type'] = row[2]
+        return result
+
+    def build_resources_available_dict(self, row):
+        result = {}
+        result['r_id'] = row[0]
+        result['r_type'] = row[1]
+        result['r_availability'] = row[2]
+        return result
 
     def build_resources_by_senate_region_dict(self, row):
         result = {}
@@ -83,6 +98,43 @@ class ResourcesHandler:
             result = self.build_resource_dict(row)
             result_list.append(result)
         return jsonify(ResourceList=result_list)
+
+    def getAllResourcesRequests(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getAllResourcesRequests()
+        result_list=[]
+        for row in resource_list:
+            result = self.build_resources_requests_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesRequests= result_list)
+
+    def getAllResourcesAvailable(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getAllResourcesAvailable()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_available_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesAvailable=result_list)
+
+    def sortResourcesRequestsByResourceName(self):
+        dao = ResourcesDAO()
+        resource_list = dao.sortResourcesRequestsByResourceName()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_requests_dict(row)
+            result_list.append(result)
+        return jsonify(SortResourcesRequestsByResourceName=result_list)
+
+    def sortResourcesAvailableByResourceName(self):
+        dao = ResourcesDAO()
+        resource_list = dao.sortResourcesAvailableByResourceName()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_available_dict(row)
+            result_list.append(result)
+        return jsonify(SortResourcesAvailableByResourceName=result_list)
+
 
     def getResourcesInNeedBySenateRegion(self):
         dao = ResourcesDAO()
@@ -246,7 +298,10 @@ class ResourcesHandler:
 
             return jsonify(Resource=result),201
         else:
-            return jsonify('Unexpected attributes in post request'),401 
+            return jsonify('Unexpected attributes in post request'),401
+
+
+
 
     
 

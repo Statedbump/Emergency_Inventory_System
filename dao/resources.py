@@ -19,6 +19,42 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+    def getAllResourcesRequests(self):
+        cursor = self.conn.cursor()
+        query = 'select p_id, requests.r_id, r_type from resource, requests where resource.r_id = requests.r_id order by p_id,requests.r_id;'
+        cursor.execute(query,)
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getAllResourcesAvailable(self):
+        cursor = self.conn.cursor()
+        query = 'select r_id, r_type, r_availability from resource where r_availability= true;'
+        cursor.execute(query, )
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def sortResourcesRequestsByResourceName(self):
+        cursor = self.conn.cursor()
+        query = 'select p_id, requests.r_id, r_type from resource, requests where resource.r_id = requests.r_id order by r_type;'
+        cursor.execute(query, )
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def sortResourcesAvailableByResourceName(self):
+        cursor = self.conn.cursor()
+        query = 'select r_id, r_type, r_availability from resource where r_availability= true order by r_type;'
+        cursor.execute(query, )
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
     def getResourceById(self,r_id):
         cur = self.conn.cursor()
         q1 = "select resource_type from resource where r_id = %s;"
@@ -147,3 +183,6 @@ class ResourcesDAO:
         cur.execute(query(r_id,))
 
     """
+
+
+
