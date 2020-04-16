@@ -82,6 +82,25 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+    def getResourcesInNeedDaily(self):
+        cur = self.conn.cursor()
+        query = 'select requests.r_id, r_type from resource, requests where resource.r_id = requests.r_id order by requests.r_id;'
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourcesAvailableDaily(self):
+        cur = self.conn.cursor()
+        query = 'select r_id, r_type from resource where r_availability = true order by r_id;'
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+
     """
     This can be made into a SQL function for faster functionality
     """

@@ -18,7 +18,7 @@ create table resource_order(o_id serial primary key,o_date DATE,o_quantity integ
 
 /* Relations*/
 create table supplies(supplier_id integer references supplier(s_id),
-		      r_id integer references resource(r_id),supplyin_date DATE , primary key(supplier_id,r_id));
+		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(supplier_id,r_id));
 create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id)
 		      ,reserve_date DATE, resource_total integer, primary key(p_id,r_id));
 create table requests(p_id integer references person(p_id),r_id integer references resource(r_id)

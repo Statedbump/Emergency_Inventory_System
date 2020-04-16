@@ -133,6 +133,14 @@ def getResourcesInNeedBySenateRegion():
 def getResourcesAvailableBySenateRegion():
     return ResourcesHandler().getResourcesAvailableBySenateRegion()
 
+@app.route('/ERIApp/resources/NeedDaily', methods=['GET'])
+def getResourcesInNeedDaily():
+    return ResourcesHandler().getResourcesInNeedDaily()
+
+@app.route('/ERIApp/resources/AvailableDaily', methods=['GET'])
+def getResourcesAvailableDaily():
+    return ResourcesHandler().getResourcesAvailableDaily()
+
 @app.route('/ERIApp/resources/<int:r_id>',
            methods=['GET', 'PUT', 'DELETE'])
 def getResourceById(r_id):

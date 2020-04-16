@@ -18,6 +18,11 @@ class ResourcesHandler:
         result['senate_region'] = row[2]
         return result
 
+    def build_resources_daily_dict(self, row):
+        result = {}
+        result['r_id'] = row[0]
+        result['r_type'] = row[1]
+        return result
 
         ##Specializations NEEDED??
 
@@ -96,6 +101,24 @@ class ResourcesHandler:
             result = self.build_resources_by_senate_region_dict(row)
             result_list.append(result)
         return jsonify(ResourcesAvailableBySenateRegion=result_list)
+
+    def getResourcesAvailableDaily(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesAvailableDaily()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_daily_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesAvailableDaily=result_list)
+
+    def getResourcesInNeedDaily(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesInNeedDaily()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_daily_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesInNeedDaily=result_list)
         
     def getResourceById(self,r_id):
         r1=(1,'batteries',10,'San Juan',10.0,True) 
