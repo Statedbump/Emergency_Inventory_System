@@ -51,10 +51,21 @@ class ResourcesHandler:
         return result
 
 
-    def build_resources_daily_dict(self, row):
+    def build_resourcesInNeed_daily_dict(self, row):
+        result = {}
+        result['p_id'] = row[0]
+        result['r_id'] = row[1]
+        result['r_type'] = row[2]
+        result['request_quantity'] = row[3]
+        result['current_date'] = row[4]
+        return result
+
+    def build_resourcesAvailable_daily_dict(self, row):
         result = {}
         result['r_id'] = row[0]
         result['r_type'] = row[1]
+        result['r_quantity'] = row[2]
+        result['current_date'] = row[3]
         return result
 
         ##Specializations NEEDED??
@@ -195,7 +206,7 @@ class ResourcesHandler:
         resource_list = dao.getResourcesAvailableDaily()
         result_list = []
         for row in resource_list:
-            result = self.build_resources_daily_dict(row)
+            result = self.build_resourcesAvailable_daily_dict(row)
             result_list.append(result)
         return jsonify(ResourcesAvailableDaily=result_list)
 
@@ -204,7 +215,7 @@ class ResourcesHandler:
         resource_list = dao.getResourcesInNeedDaily()
         result_list = []
         for row in resource_list:
-            result = self.build_resources_daily_dict(row)
+            result = self.build_resourcesInNeed_daily_dict(row)
             result_list.append(result)
         return jsonify(ResourcesInNeedDaily=result_list)
         

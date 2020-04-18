@@ -120,7 +120,7 @@ class ResourcesDAO:
 
     def getResourcesInNeedDaily(self):
         cur = self.conn.cursor()
-        query = 'select requests.r_id, r_type from resource, requests where resource.r_id = requests.r_id order by requests.r_id;'
+        query = 'select p_id, requests.r_id, r_type, request_quantity, request_date from resource natural inner join requests where request_date = current_date order by p_id, requests.r_id;'
         cur.execute(query, )
         result = []
         for row in cur:
@@ -129,7 +129,7 @@ class ResourcesDAO:
 
     def getResourcesAvailableDaily(self):
         cur = self.conn.cursor()
-        query = 'select r_id, r_type from resource where r_availability = true order by r_id;'
+        query = 'select r_id, r_type, r_quantity , current_date from resource where r_availability = true order by r_id;'
         cur.execute(query, )
         result = []
         for row in cur:
