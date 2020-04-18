@@ -26,12 +26,30 @@ class ResourcesHandler:
         result['r_availability'] = row[2]
         return result
 
-    def build_resources_by_senate_region_dict(self, row):
+    def build_resourcesInNeed_by_senate_region_dict(self, row):
+        result = {}
+        result['p_id'] = row[0]
+        result['r_id'] = row[1]
+        result['r_type'] = row[2]
+        result['request_quantity'] = row[3]
+        result['senate_region'] = row[4]
+        return result
+
+    def build_resourcesAvailable_by_senate_region_dict(self, row):
         result = {}
         result['r_id'] = row[0]
         result['r_type'] = row[1]
+        result['r_quantity'] = row[2]
+        result['senate_region'] = row[3]
+        return result
+
+    def build_resourcesMatching_by_senate_region_dict(self, row):
+        result = {}
+        result['r_type'] = row[0]
+        result['total_quantity'] = row[1]
         result['senate_region'] = row[2]
         return result
+
 
     def build_resources_daily_dict(self, row):
         result = {}
@@ -141,7 +159,7 @@ class ResourcesHandler:
         resource_list = dao.getResourcesInNeedBySenateRegion()
         result_list = []
         for row in resource_list:
-            result = self.build_resources_by_senate_region_dict(row)
+            result = self.build_resourcesInNeed_by_senate_region_dict(row)
             result_list.append(result)
         return jsonify(ResourcesInNeedBySenateRegion=result_list)
 
@@ -150,9 +168,27 @@ class ResourcesHandler:
         resource_list = dao.getResourcesAvailableBySenateRegion()
         result_list = []
         for row in resource_list:
-            result = self.build_resources_by_senate_region_dict(row)
+            result = self.build_resourcesAvailable_by_senate_region_dict(row)
             result_list.append(result)
         return jsonify(ResourcesAvailableBySenateRegion=result_list)
+
+    def getResourcesMatchingBySenateRegion(self):
+        dao = ResourcesDAO()
+        need_list = dao.getCountResourcesInNeedBySenateRegion()
+        result1_list = []
+        for row in need_list:
+            result = self.build_resourcesMatching_by_senate_region_dict(row)
+            result1_list.append(result)
+
+        available_list = dao.getCountResourcesAvailableBySenateRegion()
+        result2_list = []
+        for row in available_list:
+            result = self.build_resourcesMatching_by_senate_region_dict(row)
+            result2_list.append(result)
+        final_list = {}
+        final_list['resources_in_need_by_senate_region'] = result1_list
+        final_list['resources_available_by_senate_region'] = result2_list
+        return jsonify(ResourcesMatchingBySenateRegion=final_list)
 
     def getResourcesAvailableDaily(self):
         dao = ResourcesDAO()
@@ -299,6 +335,9 @@ class ResourcesHandler:
             return jsonify(Resource=result),201
         else:
             return jsonify('Unexpected attributes in post request'),401
+
+
+
 
 
 

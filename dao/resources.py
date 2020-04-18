@@ -102,7 +102,7 @@ class ResourcesDAO:
 
     def getResourcesInNeedBySenateRegion(self):
         cur = self.conn.cursor()
-        query = 'SELECT requests.r_id, r_type, get_senate_region(r_location) as senate_region from resource, requests where resource.r_id = requests.r_id group by senate_region, requests.r_id, r_type order by senate_region; '
+        query = 'SELECT requests.p_id, requests.r_id, r_type, request_quantity, get_senate_region(r_location) as senate_region from resource natural inner join requests group by senate_region, requests.p_id, requests.r_id, request_quantity, r_type order by senate_region;'
         cur.execute(query, )
         result = []
         for row in cur:
@@ -111,7 +111,7 @@ class ResourcesDAO:
 
     def getResourcesAvailableBySenateRegion(self):
         cur = self.conn.cursor()
-        query = 'SELECT resource.r_id, r_type, get_senate_region(r_location) as senate_region from resource where r_availability = true group by senate_region, resource.r_id, r_type order by senate_region; '
+        query = 'SELECT r_id, r_type, r_quantity, get_senate_region(r_location) as senate_region from resource where r_availability = true group by senate_region, r_id, r_type, r_quantity order by senate_region;'
         cur.execute(query, )
         result = []
         for row in cur:
@@ -183,6 +183,24 @@ class ResourcesDAO:
         cur.execute(query(r_id,))
 
     """
+
+    def getCountResourcesInNeedBySenateRegion(self):
+        cur = self.conn.cursor()
+        query = 'select sr.r_type, sum(sr.request_quantity) as resources_in_need, sr.senate_region from (SELECT requests.p_id, requests.r_id, r_type, request_quantity, get_senate_region(r_location) as senate_region from resource natural inner join requests group by senate_region, requests.p_id, requests.r_id, request_quantity, r_type order by senate_region) as sr group by sr.r_type, sr.senate_region order by sr.r_type, sr.senate_region;'
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getCountResourcesAvailableBySenateRegion(self):
+        cur = self.conn.cursor()
+        query = 'select sr.r_type, sum(sr.r_quantity) as resources_available, sr.senate_region from (SELECT r_id, r_type, r_quantity, get_senate_region(r_location) as senate_region from resource where r_availability = true group by senate_region, r_id, r_type, r_quantity order by senate_region) as sr group by sr.r_type, sr.senate_region order by sr.r_type, sr.senate_region;'
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
 
 
 

@@ -14,15 +14,15 @@ create table resource(r_id serial primary key,r_type varchar(100),r_quantity int
 		      r_price float,r_availability BOOLEAN )
 create table payment(payment_id serial primary key,payment_type varchar(100),payment_total float,
 		     o_id integer references resource_order(o_id));
-create table resource_order(o_id serial primary key,o_date DATE,o_quantity integer,r_list TEXT, order_total_price float);
+create table resource_order(o_id serial primary key, o_date DATE NULL DEFAULT CURRENT_DATE,o_quantity integer,r_list TEXT, order_total_price float);
 
 /* Relations*/
 create table supplies(supplier_id integer references supplier(s_id),
 		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(supplier_id,r_id));
-create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id)
-		      ,reserve_date DATE, resource_total integer, primary key(p_id,r_id));
+create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id), reserve_date DATE NULL DEFAULT CURRENT_DATE,
+		      , resource_total integer, primary key(p_id,r_id));
 create table requests(p_id integer references person(p_id),r_id integer references resource(r_id)
-		      ,request_date DATE, primary key(p_id,r_id));
+		      ,request_date DATE NULL DEFAULT CURRENT_DATE, request_quantity integer, primary key(p_id,r_id));
 create table manages(admin_id integer references administrator(admin_id), r_id integer references resource(r_id));
 create table buys(r_id integer references resource(r_id), o_id integer references resource_order(o_id),total_price float, resource_total integer,
 		 primary key(r_id,o_id));
