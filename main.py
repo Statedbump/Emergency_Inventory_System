@@ -205,7 +205,7 @@ def getLocationByResourceId(r_id):
     api_key = "AIzaSyCeHf-jcEx21QPuV7BZOUOukikZ-bQYxDA"
     google = GoogleMaps(api_key)
     location = ResourcesHandler().getLocationByResourceId(r_id)
-    geocode_result = google.geocode(location)
+    geocode_result = google.geocode(location+', Puerto Rico')
     lat = geocode_result[0]['geometry']['location']['lat']
     lng = geocode_result[0]['geometry']['location']['lng']
     map = Map(location, lat, lng)
