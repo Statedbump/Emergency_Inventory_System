@@ -154,6 +154,15 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+    def getLocationByResourceId(self, r_id):
+        cur = self.conn.cursor()
+        query = "select r_location from resource where r_id = %s;"
+        cur.execute(query, (r_id,))
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
 
     """
     This can be made into a SQL function for faster functionality
