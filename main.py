@@ -161,6 +161,10 @@ def getResourcesInNeedDaily():
 def getResourcesAvailableDaily():
     return ResourcesHandler().getResourcesAvailableDaily()
 
+@app.route('/ERIApp/resources/MatchingDaily', methods=['GET'])
+def getResourcesMatchingDaily():
+    return ResourcesHandler().getResourcesMatchingByDaily()
+
 @app.route('/ERIApp/resources/<int:r_id>',
            methods=['GET', 'PUT', 'DELETE'])
 def getResourceById(r_id):

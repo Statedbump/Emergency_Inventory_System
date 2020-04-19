@@ -68,6 +68,13 @@ class ResourcesHandler:
         result['current_date'] = row[3]
         return result
 
+    def build_resourcesMatching_daily_dict(self, row):
+        result = {}
+        result['r_type'] = row[0]
+        result['total_quantity'] = row[1]
+        result['current_date'] = row[2]
+        return result
+
         ##Specializations NEEDED??
 
     def build_supplier_dict(self, row):
@@ -218,7 +225,26 @@ class ResourcesHandler:
             result = self.build_resourcesInNeed_daily_dict(row)
             result_list.append(result)
         return jsonify(ResourcesInNeedDaily=result_list)
-        
+
+    def getResourcesMatchingByDaily(self):
+        dao = ResourcesDAO()
+        need_list = dao.getCountResourcesInNeedDaily()
+        result1_list = []
+        for row in need_list:
+            result = self.build_resourcesMatching_daily_dict(row)
+            result1_list.append(result)
+
+        available_list = dao.getCountResourcesAvailableDaily()
+        result2_list = []
+        for row in available_list:
+            result = self.build_resourcesMatching_daily_dict(row)
+            result2_list.append(result)
+        final_list = {}
+        final_list['resources_in_need_daily'] = result1_list
+        final_list['resources_available_daily'] = result2_list
+        return jsonify(ResourcesMatchingDaily=final_list)
+
+
     def getResourceById(self,r_id):
         r1=(1,'batteries',10,'San Juan',10.0,True) 
 
@@ -346,6 +372,10 @@ class ResourcesHandler:
             return jsonify(Resource=result),201
         else:
             return jsonify('Unexpected attributes in post request'),401
+
+
+
+
 
 
 
