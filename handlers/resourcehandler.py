@@ -75,6 +75,29 @@ class ResourcesHandler:
         result['current_date'] = row[2]
         return result
 
+    def build_resourcesInNeed_weekly_dict(self, row):
+        result = {}
+        result['p_id'] = row[0]
+        result['r_id'] = row[1]
+        result['r_type'] = row[2]
+        result['request_quantity'] = row[3]
+        result['date (in last 7 days)'] = row[4]
+        return result
+
+    def build_resourcesAvailable_weekly_dict(self, row):
+        result = {}
+        result['r_id'] = row[0]
+        result['r_type'] = row[1]
+        result['r_quantity'] = row[2]
+        result['date (in last 7 days)'] = row[3]
+        return result
+
+    def build_resourcesMatching_weekly_dict(self, row):
+        result = {}
+        result['r_type'] = row[0]
+        result['total_quantity'] = row[1]
+        result['date (in last 7 days)'] = row[2]
+        return result
         ##Specializations NEEDED??
 
     def build_supplier_dict(self, row):
@@ -226,7 +249,7 @@ class ResourcesHandler:
             result_list.append(result)
         return jsonify(ResourcesInNeedDaily=result_list)
 
-    def getResourcesMatchingByDaily(self):
+    def getResourcesMatchingDaily(self):
         dao = ResourcesDAO()
         need_list = dao.getCountResourcesInNeedDaily()
         result1_list = []
@@ -243,6 +266,44 @@ class ResourcesHandler:
         final_list['resources_in_need_daily'] = result1_list
         final_list['resources_available_daily'] = result2_list
         return jsonify(ResourcesMatchingDaily=final_list)
+
+    def getResourcesInNeedWeekly(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesInNeedWeekly()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resourcesInNeed_weekly_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesInNeedWeekly=result_list)
+
+    def getResourcesAvailableWeekly(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getResourcesAvailableWeekly()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resourcesAvailable_weekly_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesAvailableWeekly=result_list)
+
+    def getResourcesMatchingWeekly(self):
+        dao = ResourcesDAO()
+        need_list = dao.getCountResourcesInNeedWeekly()
+        result1_list = []
+        for row in need_list:
+            result = self.build_resourcesMatching_weekly_dict(row)
+            result1_list.append(result)
+
+        available_list = dao.getCountResourcesAvailableWeekly()
+        result2_list = []
+        for row in available_list:
+            result = self.build_resourcesMatching_weekly_dict(row)
+            result2_list.append(result)
+        final_list = {}
+        final_list['resources_in_need_weekly'] = result1_list
+        final_list['resources_available_weekly'] = result2_list
+        return jsonify(ResourcesMatchingWeekly=final_list)
+
+
 
 
     def getResourceById(self,r_id):
@@ -282,8 +343,6 @@ class ResourcesHandler:
         return jsonify(ResourceList=result)
 
 
-        
-        
     def getSuppliersByResourceId(self,r_id):
         sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine','777-127-8789',1)
         sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant','777-127-8889' ,1)
@@ -372,18 +431,6 @@ class ResourcesHandler:
             return jsonify(Resource=result),201
         else:
             return jsonify('Unexpected attributes in post request'),401
-
-
-
-
-
-
-
-
-
-
-
-    
 
 
 

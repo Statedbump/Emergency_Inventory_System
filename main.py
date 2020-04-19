@@ -163,7 +163,19 @@ def getResourcesAvailableDaily():
 
 @app.route('/ERIApp/resources/MatchingDaily', methods=['GET'])
 def getResourcesMatchingDaily():
-    return ResourcesHandler().getResourcesMatchingByDaily()
+    return ResourcesHandler().getResourcesMatchingDaily()
+
+@app.route('/ERIApp/resources/NeedWeekly', methods=['GET'])
+def getResourcesInNeedWeekly():
+    return ResourcesHandler().getResourcesInNeedWeekly()
+
+@app.route('/ERIApp/resources/AvailableWeekly', methods=['GET'])
+def getResourcesAvailableWeekly():
+    return ResourcesHandler().getResourcesAvailableWeekly()
+
+@app.route('/ERIApp/resources/MatchingWeekly', methods=['GET'])
+def getResourcesMatchingWeekly():
+    return ResourcesHandler().getResourcesMatchingWeekly()
 
 @app.route('/ERIApp/resources/<int:r_id>',
            methods=['GET', 'PUT', 'DELETE'])

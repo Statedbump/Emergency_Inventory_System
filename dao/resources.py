@@ -136,6 +136,24 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+    def getResourcesInNeedWeekly(self):
+        cur = self.conn.cursor()
+        query = "select p_id, requests.r_id, r_type, request_quantity, request_date from resource natural inner join requests where request_date >= now() - interval "+"'"+"7 days"+"'"+" order by p_id, requests.r_id;"
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourcesAvailableWeekly(self):
+        cur = self.conn.cursor()
+        query = "select r_id, r_type, r_quantity , supplies.supply_date from resource natural inner join supplies where r_availability = true and supplies.supply_date >= now() - interval "+"'"+"7 days"+"'"+" order by r_id;"
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
 
     """
     This can be made into a SQL function for faster functionality
@@ -214,6 +232,24 @@ class ResourcesDAO:
     def getCountResourcesAvailableDaily(self):
         cur = self.conn.cursor()
         query = 'select d.r_type, sum(d.r_quantity) as resources_available, d.current_date from (select r_id, r_type, r_quantity , current_date from resource where r_availability = true order by r_id) as d group by d.r_type, d.current_date order by d.r_type;'
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getCountResourcesInNeedWeekly(self):
+        cur = self.conn.cursor()
+        query = "select d.r_type, sum(d.request_quantity) as resources_in_need, d.request_date from (select p_id, requests.r_id, r_type, request_quantity, request_date from resource natural inner join requests where request_date >= now() - interval "+"'"+"7 days"+"'"+" order by p_id, requests.r_id) as d group  by d.r_type, d.request_date order by d.r_type;"
+        cur.execute(query, )
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getCountResourcesAvailableWeekly(self):
+        cur = self.conn.cursor()
+        query = "select d.r_type, sum(d.r_quantity) as resources_available, d.supply_date from (select r_id, r_type, r_quantity , supply_date from resource natural inner join supplies where r_availability = true and supply_date >= now() - interval "+"'"+"7 days"+"'"+" order by r_id) as d group by d.r_type, d.supply_date order by d.r_type;"
         cur.execute(query, )
         result = []
         for row in cur:
