@@ -4,7 +4,7 @@ from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
 from handlers.resourcehandler import ResourcesHandler
 from handlers.loginhandler import LoginHandler
-
+from googlemaps import Client as GoogleMaps
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -14,6 +14,7 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 # Apply CORS to this app
 CORS(app)
+
 
 @app.route('/')
 def login():
@@ -193,10 +194,22 @@ def getResourceById(r_id):
 def getPersonByResourceId(r_id):
     return ResourcesHandler().getPersonByResourceId(r_id)
 
-@app.route('/ERIApp/resources/<int:r_id>/supplier')
-def getSupplierByResourceId(r_id):
-    return ResourcesHandler().getSuppliersByResourceId(r_id) 
+@app.route('/ERIApp/resources/<int:r_id>/location')
+def getLocationByResourceId(r_id):
+    class Map:
+        def __init__(self, name, lat, lng):
+            self.name = name
+            self.lat = lat
+            self.lng = lng
 
+    api_key = "AIzaSyCeHf-jcEx21QPuV7BZOUOukikZ-bQYxDA"
+    google = GoogleMaps(api_key)
+    location = ResourcesHandler().getLocationByResourceId(r_id)
+    geocode_result = google.geocode(location+', Puerto Rico')
+    lat = geocode_result[0]['geometry']['location']['lat']
+    lng = geocode_result[0]['geometry']['location']['lng']
+    map = Map(location, lat, lng)
+    return render_template('map.html', map= map)
 
 
 if __name__ == '__main__':

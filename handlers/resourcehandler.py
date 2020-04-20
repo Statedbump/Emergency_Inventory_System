@@ -1,4 +1,5 @@
 from flask import jsonify
+from googlemaps import Client as GoogleMaps
 from dao.resources import ResourcesDAO
 
 class ResourcesHandler:
@@ -300,14 +301,19 @@ class ResourcesHandler:
         final_list['resources_in_need_weekly'] = result1_list
         final_list['resources_available_weekly'] = result2_list
         return jsonify(ResourcesMatchingWeekly=final_list)
-
+    def getLocationByResourceId(self, r_id):
+            dao = ResourcesDAO()
+            location = dao.getLocationByResourceId(r_id)
+            if not location:
+                return jsonify(Error = 'Resource Not Found'),404
+            result = location[0][0]
+            return result
 
 
 
     def getResourceById(self,r_id):
         dao = ResourcesDAO()
         row = dao.getResourceById(r_id)
-
         if not row:
             return jsonify(Eror = 'Resource Not Found'),404
         else:
@@ -354,10 +360,7 @@ class ResourcesHandler:
 
 # Needs to be finished
     def getSuppliersByResourceId(self,r_id):
-        sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine','777-127-8789',1)
-        sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant','777-127-8889' ,1)
-        resource = (2,'Batteries',5,'Mayaguez',5.0,True)
-        supplier_list = {sup1,sup2}
+        
         if not resource:
             return jsonify(Error="Resource Not Found"), 404
 
