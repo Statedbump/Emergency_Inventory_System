@@ -360,11 +360,13 @@ class ResourcesHandler:
 
 # Needs to be finished
     def getSuppliersByResourceId(self,r_id):
-        
+        dao = ResourcesDAO()
+        resource = dao.getResourceById(r_id)
         if not resource:
             return jsonify(Error="Resource Not Found"), 404
 
         result_list = []
+        supplier_list = dao.getSupplierByResourceId(r_id)
         for row in supplier_list:
             result = self.build_supplier_dict(row)
             result_list.append(result)

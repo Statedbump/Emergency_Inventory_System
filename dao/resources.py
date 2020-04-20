@@ -63,7 +63,7 @@ class ResourcesDAO:
 
     def getResourceById(self,r_id):
         cur = self.conn.cursor()
-        q1 = "select resource_type from resource where r_id = %s;"
+        q1 = "select r_type from resource where r_id = %s;"
         cur.execute(q1,(r_id,))
         material = cur.fetchone()[0]
     
@@ -217,6 +217,24 @@ class ResourcesDAO:
         cur.execute(query, (r_id,))
         result = []
         for row in cur:
+            result.append(row)
+        return result
+
+    def getSupplierByResourceId(self,r_id):
+        curr = self.conn.cursor()
+        query = "select * from supplier NATURAL INNER JOIN supplies where r_id = %s"
+        curr.execute(query, (r_id,))
+        result = []
+        for row in curr:
+            result.append(row)
+        return result
+
+    def getPersonByResourceId(self,r_id):# This should be get person by requested r-id or by purchased r_id or reserved r_id
+        curr = self.conn.cursor()
+        query = "select * from supplier NATURAL INNER JOIN supplies where r_id = %s"
+        curr.execute(query, (r_id,))
+        result = []
+        for row in curr:
             result.append(row)
         return result
 

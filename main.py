@@ -194,6 +194,10 @@ def getResourceById(r_id):
 def getPersonByResourceId(r_id):
     return ResourcesHandler().getPersonByResourceId(r_id)
 
+@app.route('/ERIApp/resources/<int:r_id>/supplier')
+def getSupplierByResourceId(r_id):
+    return ResourcesHandler().getSuppliersByResourceId(r_id)
+
 @app.route('/ERIApp/resources/<int:r_id>/location')
 def getLocationByResourceId(r_id):
     class Map:
