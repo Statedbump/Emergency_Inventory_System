@@ -12,16 +12,17 @@ class ResourcesDAO:
 
     def getAllResources(self):
         cursor = self.conn.cursor()
-        query = 'SELECT * FROM resource NATURAL JOIN water NATURAL JOIN fuel NATURAL JOIN food;'
+        query = 'SELECT * FROM resource ;'
         cursor.execute(query)
         result = []
         for row in cursor:
+
             result.append(row)
         return result
 
     def getAllResourcesRequests(self):
         cursor = self.conn.cursor()
-        query = 'select p_id, requests.r_id, r_type from resource, requests where resource.r_id = requests.r_id order by p_id,requests.r_id;'
+        query = 'select p_id, requests.r_id, r_type from resource NATURAL INNER JOIN requests;'
         cursor.execute(query,)
         result = []
         for row in cursor:
@@ -55,6 +56,11 @@ class ResourcesDAO:
             result.append(row)
         return result
 
+
+
+        #SEARCH FUNCTIONS FOR HANDLER
+ 
+
     def getResourceById(self,r_id):
         cur = self.conn.cursor()
         q1 = "select resource_type from resource where r_id = %s;"
@@ -72,33 +78,84 @@ class ResourcesDAO:
         return result
 
 
-    def getResourcesByType(self,r_type):
+    def getResourceByType(self,r_type):
         cur = self.conn.cursor()
-        if 'water'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN water WHERE r_type = %s;'
-        elif 'fuel'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN fuel WHERE r_type = %s;'
-        elif 'food'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN food WHERE r_type = %s;'
+        if 'water' in r_type or 'fuel' in r_type or 'food' in r_type:
+            query = 'SELECT * FROM resource NATURAL INNER JOIN '+ r_type+ ';'
+            cur.execute(query, ())
+           
         else:
             query = 'SELECT * FROM  resource WHERE r_type = %s;'
-        cur.execute(query,(r_type,))
+            cur.execute(query,(r_type,))
+
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourceByLocation(self,r_location):
+        cur = self.conn.cursor()
+        #Here we decided no to be specific in full information of type like water,foods, or fuel
+        query= 'SELECT * FROM resource WHERE r_location = %s;'
+        cur.execute(query,(r_location,))
+        result=[]
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourcesByTypeLocationAndAvaliability(self, r_type,r_location,r_availability): 
+        cur = self.conn.cursor()
+        if 'water' in r_type or 'fuel' in r_type or 'food' in r_type:
+            query = 'SELECT * FROM resource NATURAL INNER JOIN '+ r_type +' WHERE r_location = %s and r_availability =%s;'
+            cur.execute(query,(r_location,r_availability,))
+        else:
+            query = 'SELECT * FROM  resource WHERE r_type = %s r_location = %s and r_availability =%s;'
+            cur.execute(query,(r_type,r_location,r_availability,))
+
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourcesByTypeAndLocation(self,r_type,r_location):
+        cur = self.conn.cursor()
+        if 'water' in r_type or 'fuel' in r_type or 'food' in r_type:
+            query = 'SELECT * FROM resource NATURAL INNER JOIN '+ r_type +' WHERE r_location = %s;'
+            cur.execute(query,(r_location,))
+        else:
+            query = 'SELECT * FROM  resource WHERE r_type = %s AND r_location = %s;'
+            cur.execute(query,(r_type,r_location,))
+        
         result = []
         for row in cur:
             result.append(row)
         return result
     
-        
-        
-    def getResourceByLocation(self,location):
+    def getResourcesByTypeAndAvailability(self,r_type,r_availability):
         cur = self.conn.cursor()
-        #Here we decided no to be specific in full information of type like water,foods, or fuel
-        query= 'SELECT * FROM resource WHERE r_location = %s;'
-        cur.execute(query,(location,))
-        result=[]
+        if 'water' in r_type or 'fuel' in r_type or 'food' in r_type:
+            query = 'SELECT * FROM resource NATURAL INNER JOIN '+ r_type +' WHERE r_availability = %s;'
+            cur.execute(query,(r_availability,))
+        else:
+            query = 'SELECT * FROM  resource WHERE r_type = %s AND r_availability = %s;'
+            cur.execute(query,(r_type,r_availability,))
+        
+        result = []
         for row in cur:
             result.append(row)
         return result
+    
+    def getResourcesByLocationAndAvailability(self,r_location,r_availability):
+        cur = self.conn.cursor()
+        
+        query = 'SELECT * FROM  resource WHERE r_location = %s AND r_availability = %s;'
+        cur.execute(query,(r_location,r_availability,))
+        
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+    
 
     def getResourcesInNeedBySenateRegion(self):
         cur = self.conn.cursor()
@@ -158,21 +215,7 @@ class ResourcesDAO:
     """
     This can be made into a SQL function for faster functionality
     """
-    def getResourcesByTypeAndLocation(self,r_type,location):
-        cur = self.conn.cursor()
-        if 'water'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN water WHERE r_type = %s AND r_location = %s;'
-        elif 'fuel'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN fuel WHERE r_type = %s AND r_location = %s;'
-        elif 'food'in r_type:
-            query = 'SELECT * FROM resource NATURAL JOIN food WHERE r_type = %s AND r_location = %s;'
-        else:
-            query = 'SELECT * FROM  resource WHERE r_type = %s AND r_location = %s;'
-        cur.execute(query,(r_type,location,))
-        result = []
-        for row in cur:
-            result.append(row)
-        return result
+   
 
     
     """
@@ -195,11 +238,7 @@ class ResourcesDAO:
         cur = self.conn.cursor()
         query ="SELECT * FROM resource  ORDER BY r_type ASC WHERE r_price < = %f;"
 
-    def getSupplierbyPartId(self,r_id):
-        cur = self.conn.cursor()
-        query = 'SELECT supplier_id,first_name,middle_initial, last_name,company_name, phone,email,supplier_location  FROM resource NATURAL supplier NATURAL JOIN supplies WHERE PID = %s'
-        cur.execute(query(r_id,))
-
+    
     """
 
     def getCountResourcesInNeedBySenateRegion(self):

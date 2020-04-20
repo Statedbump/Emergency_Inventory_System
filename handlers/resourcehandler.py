@@ -148,10 +148,8 @@ class ResourcesHandler:
         return result
 
     def getAllResources(self):
-        r1=(1,'batteries',10,'San Juan',10.0,True)
-        r2=(1,'water',3,'San Juan',4.35,True)
-
-        resource_list = {r1,r2}
+        dao = ResourcesDAO()
+        resource_list = dao.getAllResources()
         result_list =[]
         for row in resource_list:
             result = self.build_resource_dict(row)
@@ -307,42 +305,54 @@ class ResourcesHandler:
 
 
     def getResourceById(self,r_id):
-        r1=(1,'batteries',10,'San Juan',10.0,True) 
+        dao = ResourcesDAO()
+        row = dao.getResourceById(r_id)
 
-        if not r1:
+        if not row:
             return jsonify(Eror = 'Resource Not Found'),404
         else:
-            r = self.build_resource_dict(r1)
+            r = self.build_resource_dict(row)
         return jsonify(Resource=r)
+
 
     def searchResource(self,args):
         r_type = args.get('r_type')
         r_availability = args.get('r_availability')
         r_location = args.get('r_location')
+        dao = ResourcesDAO()
+
+        resource_list = []
         
-        if(len(args)== 2) and r_type and r_availability:
-            r1=(1,'water',2,'San Juan',5.0,True)
-            r2=(1,'water',1,'San Juan',4.35,True)
+        if(len(args)== 3) and r_type and r_availability  and r_location:
+           resource_list = dao.getResourcesByTypeLocationAndAvaliability(r_type,r_location,r_availability)
+
+        elif(len(args)== 2) and r_type and r_availability :
+           resource_list = dao.getResourcesByTypeAndAvaliability(r_type,r_availability)
+        
+        elif(len(args)== 2) and r_type and r_location :
+           resource_list = dao.getResourcesByTypeAndLocation(r_type,r_location)
+
+        elif(len(args)== 2) and r_availability and r_location :
+            resource_list = dao.getResourcesByLocationAndAvailability(r_location,r_availability)
 
         elif(len(args)== 1) and r_type:
-            r1=(1,'batteries',10,'San Juan',10.0,True)
-            r2=(1,'batteries',3,'San Juan',4.35,True)
+            resource_list = dao.getResourceByType(r_type)
+          
         elif(len(args) ==1 ) and r_availability:
-            r1=(1,'batteries',10,'San Juan',10.0,True)
-            r2=(1,'water',3,'San Juan',4.35,True)
+            resource_list = dao.getResourceByAvailability(r_availability)
 
         elif(len(args) ==1 ) and r_location:
-            r1=(1,'batteries',10,'San Juan',10.0,True)
-            r2=(1,'water',3,'San Juan',4.35,True)
+            resource_list = dao.getResourceByLocation(r_location)
+            
         else:
             return jsonify(Error = "Malformed query string"), 400
-        resource_list = {r1,r2}
+        
         result =[]
         for row in resource_list:
             result.append(self.build_resource_dict(row))
         return jsonify(ResourceList=result)
 
-
+# Needs to be finished
     def getSuppliersByResourceId(self,r_id):
         sup1 = (1, 'Luke', 'O', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Tatoine','777-127-8789',1)
         sup2 = (1, 'Leia', 'P', 'Skywalker', 'Rebels Inc', '102 RebelBase 31', 'Quorosant','777-127-8889' ,1)
@@ -357,7 +367,7 @@ class ResourcesHandler:
             result_list.append(result)
         return jsonify(SupplierByResourcesID=result_list)
 
-
+#needs to be
     def getPersonByResourceId(self,r_id):
         p1 = (1,'Joe','F','Chill','joe.chill@upr.edu','Jayuyas','7877787811',1)
         p2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','9399399393',2)
