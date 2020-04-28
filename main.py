@@ -53,9 +53,13 @@ def getPersonById(p_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/ERIApp/person/<int:p_id>/resources')
-def getResourcesByPersonId(p_id):
-    return PersonHandler().getResourcesByPersonId(p_id)
+@app.route('/ERIApp/person/<int:p_id>/reserves')
+def getReservedResourcesByPersonId(p_id):
+    return PersonHandler().getReservedResourcesByPersonId(p_id)
+
+@app.route('/ERIApp/person/<int:p_id>/purchases')
+def getPurchasedResourcesByPersonId(p_id):
+    return PersonHandler().getPurchasedResourcesByPersonId(p_id)
 
 
 @app.route('/ERIApp/person/<int:p_id>/requests')

@@ -31,23 +31,54 @@ class PersonHandler:
 
     def build_requested_resource_dict(self, row):
         result = {}
-        result['r_id'] = row[0]
-        result['r_type'] = row[1]
-        result['r_location'] = row[2]
-        result['r_quantity'] = row[3]
+        result['p_id'] = row[0]
+        result['first_name'] = row[1]
+        result['middle_initial'] = row[2]
+        result['last_name'] = row[3]
+        result['r_id'] = row[4]
+        result['r_type'] = row[5]
+        result['r_location'] = row[6]
+        result['r_quantity'] = row[7]
         if result['r_type'] == 'Water':
-            result['water_type'] = row[4]
-            result['measurement_unit'] = row[5]
-            result['r_availability'] = row[6]
+            result['water_type'] = row[8]
+            result['measurement_unit'] = row[9]
+            result['r_availability'] = row[10]
         elif result['r_type'] == 'Fuel':
-            result['fuel_type'] = row[4]
-            result['fuel_octane_rating'] = row[5]
-            result['r_availability'] = row[6]
+            result['fuel_type'] = row[8]
+            result['fuel_octane_rating'] = row[9]
+            result['r_availability'] = row[10]
         elif result['r_type'] == 'Food':
-            result['food_type'] = row[4]
-            result['r_availability'] = row[5]
+            result['food_type'] = row[8]
+            result['r_availability'] = row[9]
         else:
-            result['r_availability'] = row[4]
+            result['r_availability'] = row[8]
+        return result
+
+    def build_reserved_and_purchased_resource_dict(self, row):
+        result = {}
+        result['p_id'] = row[0]
+        result['first_name'] = row[1]
+        result['middle_initial'] = row[2]
+        result['last_name'] = row[3]
+        result['r_id'] = row[4]
+        result['r_type'] = row[5]
+        if result['r_type'] == 'Water':
+            result['water_type'] = row[6]
+            result['measurement_unit'] = row[7]
+            result['resource_total'] = row[8]
+            result['date'] = row[9]
+        elif result['r_type'] == 'Fuel':
+            result['fuel_type'] = row[6]
+            result['fuel_octane_rating'] = row[7]
+            result['resource_total'] = row[8]
+            result['date'] = row[9]
+        elif result['r_type'] == 'Food':
+            result['food_type'] = row[6]
+            result['resource_total'] = row[7]
+            result['date'] = row[8]
+        else:
+            result['resource_total'] = row[6]
+            result['date'] = row[7]
         return result
 
     def getAllPerson(self):
@@ -80,17 +111,29 @@ class PersonHandler:
                 result_list.append(result)
             return jsonify(PersonList=result_list)
 
-    def getResourcesByPersonId(self, pid):
+    def getReservedResourcesByPersonId(self, pid):
         dao = PersonDAO()
         person1 = dao.getPersonById(pid)
         if not person1:
             return jsonify(Error="Person Not Found"), 404
-        resources_list = dao.getResourcesByPersonId(pid)
+        resources_list = dao.getReservedResourcesByPersonId(pid)
         result_list = []
         for row in resources_list:
-            result = self.build_resource_dict(row)
+            result = self.build_reserved_and_purchased_resource_dict(row)
             result_list.append(result)
-        return jsonify(ResourcesByPersonID=result_list)
+        return jsonify(ReservedResourcesByPersonID=result_list)
+
+    def getPurchasedResourcesByPersonId(self, pid):
+        dao = PersonDAO()
+        person1 = dao.getPersonById(pid)
+        if not person1:
+            return jsonify(Error="Person Not Found"), 404
+        resources_list = dao.getPurchasedResourcesByPersonId(pid)
+        result_list = []
+        for row in resources_list:
+            result = self.build_reserved_and_purchased_resource_dict(row)
+            result_list.append(result)
+        return jsonify(PurchasedResourcesByPersonID=result_list)
 
     def getRequestedResourcesByPersonId(self, p_id):
         dao = PersonDAO()
