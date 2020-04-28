@@ -1,5 +1,5 @@
 from flask import jsonify
-from googlemaps import Client as GoogleMaps
+#from googlemaps import Client as GoogleMaps
 from dao.resources import ResourcesDAO
 
 class ResourcesHandler:

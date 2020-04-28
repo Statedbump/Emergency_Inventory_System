@@ -4,7 +4,7 @@ from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
 from handlers.resourcehandler import ResourcesHandler
 from handlers.loginhandler import LoginHandler
-from googlemaps import Client as GoogleMaps
+#from googlemaps import Client as GoogleMaps
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
