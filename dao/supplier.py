@@ -1,13 +1,12 @@
-from config.rexdbconfig import pg_config
+from config.dbconfig import pg_config
 import psycopg2
 
 class SupplierDAO:
     def __init__(self):
-
         connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
-                                                            pg_config['user'],
-                                                            pg_config['passwd'],
-                                                            pg_config['host'])
+                                                                    pg_config['user'],
+                                                                    pg_config['passwd'],
+                                                                    pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
     def getAllSuppliers(self):
@@ -19,32 +18,32 @@ class SupplierDAO:
             result.append(row)
         return result
 
-    def getSupplierById(self, s_id):
+    def getSupplierById(self, supplier_id):
         cursor = self.conn.cursor()
-        query = "select * from supplier where s_id = %s;"
-        cursor.execute(query, (s_id,))
+        query = "select * from supplier where supplier_id = %s;"
+        cursor.execute(query, (supplier_id,))
         result = cursor.fetchone()
         return result
 
-    def getResourcesBySupplierId(self, s_id):
+    def getResourcesBySupplierId(self, supplier_id):
         cursor = self.conn.cursor()
         #Requested resources
         result = []
         query = "select r_id, r_type, water_type, measurement_unit, r_location, resource_total, request_date from resource natural inner join supplier natural inner join requests natural inner join water where s_id =%s and r_type ='Water';"
-        cursor.execute(query, (s_id,))
+        cursor.execute(query, (supplier_id,))
         for row in cursor:
             result.append(row)
         query = "select r_id, r_type, fuel_type, fuel_octane_rating, r_location, resource_total, request_date from resource natural inner join supplier natural inner join requests natural inner join fuel where s_id =%s and r_type ='Fuel';"
-        cursor.execute(query, (s_id,))
+        cursor.execute(query, (supplier_id,))
         for row in cursor:
             result.append(row)
         query = "select r_id, r_type, food_type, r_location, resource_total, request_date from resource natural inner join supplier natural inner join requests natural inner join food where s_id =%s and r_type ='Food';"
-        cursor.execute(query, (s_id,))
+        cursor.execute(query, (supplier_id,))
         result = []
         for row in cursor:
             result.append(row)
         query = "select r_id, r_type, r_location, resource_total, request_date from resource natural inner join supplier natural inner join requests where s_id =1 and r_type <> 'Food' and r_type <> 'Water' and r_type <> 'Fuel';"
-        cursor.execute(query, (s_id,))
+        cursor.execute(query, (supplier_id,))
         result = []
         for row in cursor:
             result.append(row)

@@ -1,7 +1,7 @@
 from config.dbconfig import pg_config
 import psycopg2
 
-class AdminDAO:
+class LoginDAO:
     def __init__(self):
         connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
                                                                     pg_config['user'],
@@ -9,43 +9,43 @@ class AdminDAO:
                                                                     pg_config['host'])
         self.conn = psycopg2._connect(connection_url)
 
-    def getAllAdmin(self):
+    def getAllLogin(self):
         cursor = self.conn.cursor()
-        query = "select * from administrator;"
+        query = "select * from login;"
         cursor.execute(query)
         result = []
         for row in cursor:
             result.append(row)
         return result
 
-    def getAdminById(self, admin_id):
+    def getLoginById(self, login_id):
         cursor = self.conn.cursor()
-        query = "select * from administrator where admin_id = %s;"
-        cursor.execute(query, (admin_id,))
+        query = "select * from login where login_id = %s;"
+        cursor.execute(query, (login_id,))
         result = cursor.fetchone()
         return result
 
-    def insertAdmin(self, permission_key, p_id):
+    def insertLogin(self, username, password):
         cursor = self.conn.cursor()
-        query = "insert into administrator(permission_key, p_id) values (%s, %s) returning admin_id;"
-        cursor.execute(query, (permission_key, p_id,))
-        admin_id = cursor.fetchone()[0]
+        query = "insert into login(username, password) values (%s, %s) returning login_id;"
+        cursor.execute(query, (username, password))
+        login_id = cursor.fetchone()[0]
         self.conn.commit()
-        return admin_id
+        return login_id
 
-    def deleteAdmin(self, admin_id):
+    def deleteLogin(self, login_id):
         cursor = self.conn.cursor()
-        query = "delete from administrator where admin_id = %s;"
-        cursor.execute(query, (admin_id,))
+        query = "delete from login where login_id = %s;"
+        cursor.execute(query, (login_id,))
         self.conn.commit()
-        return admin_id
+        return login_id
 
-    def updateAdmin(self, admin_id, permission_key, p_id):
+    def updateLogin(self, login_id, username, password):
         cursor = self.conn.cursor()
-        query = "update administrator set permission_key = %s, p_id = %s where admin_id = %s;"
-        cursor.execute(query, (permission_key,p_id, admin_id,))
+        query = "update login set username = %s, password = %s where login_id = %s;"
+        cursor.execute(query, (username, password, login_id,))
         self.conn.commit()
-        return admin_id
+        return login_id
 
 
 
