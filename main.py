@@ -4,7 +4,8 @@ from handlers.supplierhandler import supplierHandler
 from handlers.administratorhandler import AdministratorHandler
 from handlers.resourcehandler import ResourcesHandler
 from handlers.loginhandler import LoginHandler
-#from googlemaps import Client as GoogleMaps
+
+from googlemaps import Client as GoogleMaps
 # Import Cross-Origin Resource Sharing to enable
 # services on other ports on this machine or on other
 # machines to access this app
@@ -53,6 +54,7 @@ def getPersonById(p_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
+# HTML NEEDS WORK 
 @app.route('/ERIApp/person/<int:p_id>/reserves')
 def getReservedResourcesByPersonId(p_id):
     return PersonHandler().getReservedResourcesByPersonId(p_id)
@@ -182,12 +184,13 @@ def getResourcesAvailableWeekly():
 def getResourcesMatchingWeekly():
     return ResourcesHandler().getResourcesMatchingWeekly()
 
+
 @app.route('/ERIApp/resources/<int:r_id>',
            methods=['GET', 'PUT', 'DELETE'])
 def getResourceById(r_id):
     if request.method == 'GET':
         return ResourcesHandler().getResourceById(r_id)
-    elif request.method == 'PUT':
+    elif request.method == 'PUT':#Update
         pass
     elif request.method == 'DELETE':
         pass
