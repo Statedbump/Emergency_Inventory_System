@@ -64,10 +64,13 @@ def getPurchasedResourcesByPersonId(p_id):
     return PersonHandler().getPurchasedResourcesByPersonId(p_id)
 
 
-@app.route('/ERIApp/person/<int:p_id>/requests')
+@app.route('/ERIApp/person/<int:p_id>/requests', methods=['GET', 'POST'])
 def getRequestedResourcesByPersonId(p_id):
-    return PersonHandler().getRequestedResourcesByPersonId(p_id)
-
+    if request.method == 'POST':
+        return PersonHandler().requestResource(p_id, request.form)
+    else:
+        if not request.args:
+            return PersonHandler().getRequestedResourcesByPersonId(p_id)
 
 
 #------Supplier--------
@@ -93,33 +96,63 @@ def getSupplierById(s_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/ERIApp/supplier/<int:p_id>/resources')
-def getResourcesBySupplierId(p_id):
-    return supplierHandler().getResourcesBySupplierId(p_id)
+@app.route('/ERIApp/supplier/<int:s_id>/resources')
+def getResourcesBySupplierId(s_id):
+    return supplierHandler().getResourcesBySupplierId(s_id)
 
 
 
-#-----Admin------
-@app.route('/ERIApp/administrators')
+#-----Administrator------
+@app.route('/ERIApp/admin', methods=['GET', 'POST'])
 def getAllAdmin():
-    return AdministratorHandler().getAllAdmin()
+    if request.method == 'POST':
+        return AdministratorHandler().insertAdmin(request.form)
+    else:
+        if not request.args:
+            return AdministratorHandler().getAllAdmin()
 
-@app.route('/ERIApp/administrators/<int:adm_id>')
-def getAdminByAdmId(adm_id):
-    return AdministratorHandler().getAdminByAdmId(adm_id)
+@app.route('/ERIApp/admin/<int:admin_id>/resources', methods=['GET', 'POST'])
+def getResourcesByAdminId(admin_id):
+    if request.method == 'POST':
+        return AdministratorHandler().manageResource(admin_id, request.form)
+    else:
+        if not request.args:
+            return AdministratorHandler().getResourcesByAdminId(admin_id)
 
-@app.route('/ERIApp/administrators/<int:adm_id>/resources')
-def getResourcesByAdminId(adm_id):
-    return AdministratorHandler().getResourcesByAdminId(adm_id)
+@app.route('/ERIApp/admin/<int:admin_id>',
+           methods=['GET', 'PUT', 'DELETE'])
+def getAdminById(admin_id):
+    if request.method == 'GET':
+        return AdministratorHandler().getAdminById(admin_id)
+    elif request.method == 'PUT':
+        return AdministratorHandler().updateAdmin(admin_id, request.form)
+    elif request.method == 'DELETE':
+        return AdministratorHandler().deleteAdmin(admin_id)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
 
 
 
-#---------------Login-------------------
-@app.route('/ERIApp/login')
+#-----Login------
+@app.route('/ERIApp/login', methods=['GET', 'POST'])
 def getAllLogin():
-    return LoginHandler().getAllLogin()
+    if request.method == 'POST':
+        return LoginHandler().insertLogin(request.form)
+    else:
+        if not request.args:
+            return LoginHandler().getAllLogin()
 
-
+@app.route('/ERIApp/login/<int:login_id>',
+           methods=['GET', 'PUT', 'DELETE'])
+def getLoginById(login_id):
+    if request.method == 'GET':
+        return LoginHandler().getLoginById(login_id)
+    elif request.method == 'PUT':
+        return LoginHandler().updateLogin(login_id, request.form)
+    elif request.method == 'DELETE':
+        return LoginHandler().deleteLogin(login_id)
+    else:
+        return jsonify(Error = "Method not allowed"), 405
 
 #----->Resources<-----
 @app.route('/ERIApp/resources', methods=['GET', 'POST'])

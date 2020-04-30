@@ -19,8 +19,8 @@ create table payment(payment_id serial primary key,payment_type varchar(100),pay
 		     o_id integer references resource_order(o_id));
 
 /* Relations*/
-create table supplies(supplier_id integer references supplier(s_id),
-		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(supplier_id,r_id));
+create table supplies(s_id integer references supplier(s_id),
+		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(s_id,r_id));
 
 create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id), reserve_date DATE NULL DEFAULT CURRENT_DATE
 		      , resource_total integer, primary key(p_id,r_id));

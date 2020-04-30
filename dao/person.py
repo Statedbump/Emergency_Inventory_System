@@ -79,6 +79,13 @@ class PersonDAO:
             result.append(row)
         return result
 
+    def requestResource(self, p_id, r_id, request_quantity):
+        cursor = self.conn.cursor()
+        query = "insert into requests(p_id, r_id, request_quantity) values (%s, %s, %s);"
+        cursor.execute(query, (p_id,r_id,request_quantity,))
+        self.conn.commit()
+        return p_id
+
     def insert(self, first_name, middle_initial, last_name, email, location_of_p, phone, login_id):
         cursor = self.conn.cursor()
         query = "insert into person(first_name, middle_initial, last_name, email, location_of_p, phone, login_id) values (%s, %s, %s, %s, %s, %s, %s) returning p_id;"

@@ -5,39 +5,44 @@ class supplierHandler:
 
     def build_supplier_dict(self, row):
         result = {}
-        result['s_id'] = row[0]
-        result['s_first_name'] = row[1]
-        result['s_middle_initial'] = row[2]
-        result['s_last_name'] = row[3]
-        result['s_location'] = row[4]
-        result['company_name'] = row[5]
-        result['warehouse_address'] = row[6]
-        result['s_phone'] = row[7]
+        result['supplier_id'] = row[0]
+        result['first_name'] = row[1]
+        result['middle_initial'] = row[2]
+        result['last_name'] = row[3]
+        result['company_name'] = row[4]
+        result['warehouse_address'] = row[5]
+        result['supplier_location'] = row[6]
+        result['phone'] = row[7]
         result['login_id'] = row[8]
         return result
 
     def build_resource_dict(self, row):
         result = {}
-        result['r_id'] = row[0]
-        result['r_type'] = row[1]
-        result['r_location'] = row[2]
-        result['resource_total'] = row[3]
+        result['supplier_id'] = row[0]
+        result['first_name'] = row[1]
+        result['middle_initial'] = row[2]
+        result['last_name'] = row[3]
+        result['r_id'] = row[4]
+        result['r_type'] = row[5]
         if result['r_type'] == 'Water':
-            result['water_type'] = row[4]
-            result['measurement_unit'] = row[5]
+            result['water_type'] = row[6]
+            result['measurement_unit'] = row[7]
+            result['r_location'] = row[8]
+            result['supply_date']= row[9]
         elif result['r_type'] == 'Fuel':
-            result['fuel_type'] = row[4]
-            result['fuel_octane_rating'] = row[5]
+            result['fuel_type'] = row[6]
+            result['fuel_octane_rating'] = row[7]
+            result['r_location'] = row[8]
+            result['supply_date'] = row[9]
         elif result['r_type'] == 'Food':
-            result['food_type'] = row[4]
+            result['food_type'] = row[6]
+            result['r_location'] = row[7]
+            result['supply_date'] = row[8]
         return result
 
     def getAllSuppliers(self):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-        sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
-        suppliers_list = {sup1, sup2}
-        #dao = SupplierDAO()
-        #suppliers_list = dao.getAllSuppliers()
+        dao = SupplierDAO()
+        suppliers_list = dao.getAllSuppliers()
         result_list = []
         for row in suppliers_list:
             result = self.build_supplier_dict(row)
@@ -45,9 +50,8 @@ class supplierHandler:
         return jsonify(SupplierList=result_list)
 
     def getSupplierById(self, sid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-        #dao = SupplierDAO()
-        #sup1 = dao.getSupplierById(sid)
+        dao = SupplierDAO()
+        sup1 = dao.getSupplierById(sid)
         if not sup1:
             return jsonify(Error="Supplier Not Found"), 404
         else:
@@ -55,10 +59,8 @@ class supplierHandler:
         return jsonify(Supplier = supplier)
 
     def getSupplierByLocation(self, location):
-        sup1 = (1, 'Yetsiel', 'S', 'Aviles', 'yetsiel.aviles@upr.edu', 'Hormigueros', '1', '7877877878',4)
-        supplier_list = sup1
-        #dao = SupplierDAO()
-        #supplier_list = dao.getSupplierByLocation(location)
+        dao = SupplierDAO()
+        supplier_list = dao.getSupplierByLocation(location)
         if not supplier_list:
             return jsonify(Error="Supplier Not Found"), 404
         else:
@@ -69,15 +71,11 @@ class supplierHandler:
             return jsonify(SupplierList=result_list)
 
     def getResourcesBySupplierId(self, sid):
-        sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-        resource1 = (1,'Ice',1,'Mayaguez',1.0,True)
-        resource2 = (2,'Batteries',5,'Mayaguez',5.0,True)
-        resources_list = {resource1,resource2}
-        #dao = SupplierDAO()
-        #sup1 = dao.getSupplierById(sid)
+        dao = SupplierDAO()
+        sup1 = dao.getSupplierById(sid)
         if not sup1:
             return jsonify(Error="Supplier Not Found"), 404
-        #resources_list = dao.getResourcesBySupplierId(sid)
+        resources_list = dao.getResourcesBySupplierId(sid)
         result_list = []
         for row in resources_list:
             result = self.build_resource_dict(row)
@@ -90,11 +88,8 @@ class supplierHandler:
         else:
             location = args.get("supplier_location")
             if location:
-                sup1 = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
-                sup2 = (2,'Juan','D','Barrio','Cayey','Juan Del Barrio Corp','San Juan','9399399393',2)
-                supplier_list = {sup1, sup2}
-                #dao = SupplierDAO()
-                #supplier_list = dao.getSupplierByLocation(location)
+                dao = SupplierDAO()
+                supplier_list = dao.getSupplierByLocation(location)
                 result_list = []
                 for row in supplier_list:
                     result = self.build_supplier_dict(row)
@@ -114,7 +109,6 @@ class supplierHandler:
             sphone = form['phone']
             loginID = form['login_id']
             if sfirstname and slastname and smiddleinitial and companyname and warehouseaddress and slocation and sphone and loginID:
-                #row = (1,'Rex','J','Reyes','Cidra','Rexolutions','Cataño','7877877878',1)
                 dao = SupplierDAO()
                 sid = dao.insert(sfirstname, smiddleinitial, slastname, slocation, companyname, warehouseaddress, sphone, loginID)
                 result = {}
