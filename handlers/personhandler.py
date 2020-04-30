@@ -1,6 +1,7 @@
 from flask import jsonify
 from dao.person import PersonDAO
 class PersonHandler:
+
     def build_person_dict(self, row):
         result = {}
         result['p_id'] = row[0]
@@ -11,22 +12,6 @@ class PersonHandler:
         result['location_of_p'] = row[5]
         result['phone'] = row[6]
         result['login_id'] = row[7]
-        return result
-
-    def build_resource_dict(self, row):
-        result = {}
-        result['r_id'] = row[0]
-        result['r_type'] = row[1]
-        result['r_location'] = row[2]
-        result['resource_total'] = row[3]
-        if result['r_type'] == 'Water':
-            result['water_type'] = row[4]
-            result['measurement_unit'] = row[5]
-        elif result['r_type'] == 'Fuel':
-            result['fuel_type'] = row[4]
-            result['fuel_octane_rating'] = row[5]
-        elif result['r_type'] == 'Food':
-            result['food_type'] = row[4]
         return result
 
     def build_requested_resource_dict(self, row):
@@ -229,3 +214,23 @@ class PersonHandler:
                     return jsonify(Person=result), 200
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
+
+    def requestResource(self, pid, form):
+        dao = PersonDAO()
+        if not dao.getPersonById(pid):
+            return jsonify(Error="Person not found."), 404
+        else:
+            if len(form) != 2:
+                return jsonify(Error="Malformed update request"), 400
+            else:
+                rid = form['r_id']
+                requestquantity = form['request_quantity']
+                if rid and requestquantity:
+                    dao.requestResource(pid, rid, requestquantity)
+                    result = {}
+                    result['p_id'] = pid
+                    result['r_id'] = rid
+                    result['request_quantity'] = requestquantity
+                    return jsonify(Request=result), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in insert request"), 400

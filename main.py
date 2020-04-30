@@ -62,10 +62,13 @@ def getPurchasedResourcesByPersonId(p_id):
     return PersonHandler().getPurchasedResourcesByPersonId(p_id)
 
 
-@app.route('/ERIApp/person/<int:p_id>/requests')
+@app.route('/ERIApp/person/<int:p_id>/requests', methods=['GET', 'POST'])
 def getRequestedResourcesByPersonId(p_id):
-    return PersonHandler().getRequestedResourcesByPersonId(p_id)
-
+    if request.method == 'POST':
+        return PersonHandler().requestResource(p_id, request.form)
+    else:
+        if not request.args:
+            return PersonHandler().getRequestedResourcesByPersonId(p_id)
 
 
 #------Supplier--------
@@ -105,6 +108,14 @@ def getAllAdmin():
     else:
         if not request.args:
             return AdministratorHandler().getAllAdmin()
+
+@app.route('/ERIApp/admin/<int:admin_id>/resources', methods=['GET', 'POST'])
+def getResourcesByAdminId(admin_id):
+    if request.method == 'POST':
+        return AdministratorHandler().manageResource(admin_id, request.form)
+    else:
+        if not request.args:
+            return AdministratorHandler().getResourcesByAdminId(admin_id)
 
 @app.route('/ERIApp/admin/<int:admin_id>',
            methods=['GET', 'PUT', 'DELETE'])

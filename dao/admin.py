@@ -47,6 +47,34 @@ class AdminDAO:
         self.conn.commit()
         return admin_id
 
+    def manageResource(self, admin_id, r_id):
+        cursor = self.conn.cursor()
+        query = "insert into manages(admin_id, r_id) values (%s, %s);"
+        cursor.execute(query, (admin_id, r_id,))
+        self.conn.commit()
+        return admin_id
+
+    def getResourcesByAdminId(self, admin_id):
+        cursor = self.conn.cursor()
+        result = []
+        query = "select r_id, r_type, r_quantity, r_location, water_type, measurement_unit, r_availability, admin_id from resource natural inner join administrator natural inner join manages natural inner join water where admin_id =%s and r_type ='Water';"
+        cursor.execute(query, (admin_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_quantity, r_location,fuel_type, fuel_octane_rating,r_availability, admin_id from resource natural inner join administrator natural inner join manages natural inner join fuel where admin_id =%s and r_type ='Fuel';"
+        cursor.execute(query, (admin_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_quantity, r_location, food_type, r_availability, admin_id from resource natural inner join administrator natural inner join manages natural join food where admin_id =%s and r_type ='Food';"
+        cursor.execute(query, (admin_id,))
+        for row in cursor:
+            result.append(row)
+        query = "select r_id, r_type, r_quantity, r_location, r_availability, admin_id from resource natural inner join administrator natural inner join manages where admin_id =%s and r_type <> 'Water' and r_type <> 'Fuel' and r_type <>'Food';"
+        cursor.execute(query, (admin_id,))
+        for row in cursor:
+            result.append(row)
+        return result
+
 
 
 
