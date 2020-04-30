@@ -91,9 +91,9 @@ def getSupplierById(s_id):
     else:
         return jsonify(Error = "Method not allowed"), 405
 
-@app.route('/ERIApp/supplier/<int:p_id>/resources')
-def getResourcesBySupplierId(p_id):
-    return supplierHandler().getResourcesBySupplierId(p_id)
+@app.route('/ERIApp/supplier/<int:s_id>/resources')
+def getResourcesBySupplierId(s_id):
+    return supplierHandler().getResourcesBySupplierId(s_id)
 
 
 
