@@ -241,7 +241,25 @@ class PersonHandler:
                 return jsonify(Request=result), 200
 
 
-
+    def offerPayment(self,pid, form):
+        dao = PersonDAO()
+        if not dao.getPersonById(pid):
+            return jsonify(Error = "Person not found."), 404
+        elif form and len(form) == 2:
+            paytype = form['payment_type']
+            paymenttotal = form['payment_total']
+            if paytype and paymenttotal:
+                text = dao.offerPayment(pid, paytype, paymenttotal)
+                if text == "New payment":
+                    result = {}
+                    result['p_id'] = pid
+                    result['payment_type'] = paytype
+                    result['payment_total'] = paymenttotal
+                    return jsonify(Payment=result), 201
+            else:
+                return jsonify('Unexpected attributes in post request'), 401
+        else:
+            return jsonify(Error="Malformed post request"), 400
 
 
     def requestResource(self, pid, form):

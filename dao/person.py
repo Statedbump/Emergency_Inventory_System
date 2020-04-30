@@ -238,3 +238,16 @@ class PersonDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def offerPayment(self,pid, payment_type, payment_total):
+        cursor = self.conn.cursor()
+        query = "insert into payment(payment_type,payment_total) values (%s, %s) returning payment_id;"
+        cursor.execute(query, (payment_type, payment_total,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        payment_id = result[0][0]
+        query = "insert into offers(p_id,payment_id) values (%s, %s);"
+        cursor.execute(query, (pid,payment_id,))
+        self.conn.commit()
+        return "New payment"
