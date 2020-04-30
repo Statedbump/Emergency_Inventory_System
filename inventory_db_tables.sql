@@ -4,7 +4,7 @@ create table login(login_id serial primary key, username varchar(100), password 
 create table person(p_id serial primary key,first_name varchar(100),
 		    middle_initial varchar(3),last_name varchar(100),email varchar(320),
 		    location_of_p varchar(300),phone varchar(15),login_id integer references login(login_id));
-create table supplier(supplier_id serial primary key, first_name varchar(100),middle_initial char(3),
+create table supplier(s_id serial primary key, first_name varchar(100),middle_initial char(3),
 		      last_name varchar(100), company_name varchar(150),warehouse_address varchar(200),
 		      supplier_location varchar(300),phone varchar(15),login_id integer references login(login_id));
 /* Specialization of Person*/
@@ -17,8 +17,8 @@ create table payment(payment_id serial primary key,payment_type varchar(100),pay
 create table resource_order(o_id serial primary key, o_date DATE NULL DEFAULT CURRENT_DATE,o_quantity integer,r_list TEXT, order_total_price float);
 
 /* Relations*/
-create table supplies(supplier_id integer references supplier(supplier_id),
-		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(supplier_id,r_id));
+create table supplies(s_id integer references supplier(s_id),
+		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(s_id,r_id));
 create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id), reserve_date DATE NULL DEFAULT CURRENT_DATE
 		      , resource_total integer, primary key(p_id,r_id));
 create table requests(p_id integer references person(p_id),r_id integer references resource(r_id)

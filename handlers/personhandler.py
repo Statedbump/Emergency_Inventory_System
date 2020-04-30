@@ -215,6 +215,35 @@ class PersonHandler:
                 else:
                     return jsonify(Error="Unexpected attributes in update request"), 400
 
+    def acquireResource(self, pid, form):
+        dao= PersonDAO()
+        rid = form['r_id']
+        requestquantity = form['resource_total']
+        result = dao.acquireResource(pid, rid, requestquantity)
+        if result == 'No request':
+            return jsonify(Error="No request exist for that resource"), 404
+        elif result == 'No payment':
+            return jsonify(Error="No payment exists for that order"), 404
+        elif result == 'Reservation done':
+            return jsonify(Error="Resource is already reserved for that person"), 400
+        elif result == 'Purchase done':
+            return jsonify(Error="Resource is already purchased for that person"), 400
+        elif result == 'Not available':
+            return jsonify("Error: Resource Unavailable or requested quantity is too high"), 400
+        elif result == 'Not enough':
+            return jsonify("Error: Payment amount is not enough"), 400
+        elif result == 'Succeed':
+            if rid and requestquantity:
+                result = {}
+                result['p_id'] = pid
+                result['r_id'] = rid
+                result['resource_total'] = requestquantity
+                return jsonify(Request=result), 200
+
+
+
+
+
     def requestResource(self, pid, form):
         dao = PersonDAO()
         if not dao.getPersonById(pid):
@@ -226,7 +255,7 @@ class PersonHandler:
                 rid = form['r_id']
                 requestquantity = form['request_quantity']
                 if rid and requestquantity:
-                    dao.requestResource(pid, rid, requestquantity)
+                    dao.requestResource(pid,rid,requestquantity)
                     result = {}
                     result['p_id'] = pid
                     result['r_id'] = rid
