@@ -252,6 +252,7 @@ class ResourcesDAO:
         query = 'SELECT * FROM resource ORDER BY r_type ASC WHERE r_availability = %s;'
         cur.execute(query,(availability,))
         resutl = []
+        
         for row in cur:
             result.append(row)
         return result
@@ -322,5 +323,5 @@ class ResourcesDAO:
             result.append(row)
         return result
 
-
+    #Insert Update Delete
 
