@@ -38,6 +38,9 @@ class supplierHandler:
             result['food_type'] = row[6]
             result['r_location'] = row[7]
             result['supply_date'] = row[8]
+        else:
+            result['r_location'] = row[6]
+            result['supply_date'] = row[7]
         return result
 
     def getAllSuppliers(self):

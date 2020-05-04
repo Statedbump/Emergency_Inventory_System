@@ -12,11 +12,11 @@ insert into resource(r_type ,r_quantity ,r_location ,r_price ,r_availability ) v
 insert into fuel(fuel_type,fuel_octane_rating,r_id) values('Gasoline',87,3);
 insert into resource(r_type ,r_quantity ,r_location ,r_price ,r_availability ) values('Food',16,'San Juan',0.00,True);
 insert into food(food_type,r_id ) values('Baby Food',4);
-insert into supplies(supplier_id , r_id ,supplyin_date ) values(1,1,'2020-04-17');
-insert into supplies(supplier_id , r_id ,supplyin_date ) values(1,2,'2020-04-17');
-insert into supplies(supplier_id , r_id ,supplyin_date ) values(1,3,'2020-04-17');
-insert into supplies(supplier_id , r_id ,supplyin_date ) values(1,4,'2020-04-17');
-insert into requests(p_id, r_id , request_date , resource_total) values (1,4,'2020-04-17',1);
+insert into supplies(s_id , r_id ,supply_date ) values(1,1,'2020-04-17');
+insert into supplies(s_id , r_id ,supply_date ) values(1,2,'2020-04-17');
+insert into supplies(s_id , r_id ,supply_date ) values(1,3,'2020-04-17');
+insert into supplies(s_id , r_id ,supply_date ) values(1,4,'2020-04-17');
+insert into requests(p_id, r_id , request_date , request_quantity) values (1,4,'2020-04-17',1);
 insert into resource_order(o_date ,o_quantity ,r_list, order_total_price ) values('2020-04-17',3,
                     'Batteries, Gasoline Fuel, Nikini Water Bottles',29.00);
 insert into payment (payment_type ,payment_total , o_id ) values('ATH Movil',29.00,1);

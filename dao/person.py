@@ -1,14 +1,12 @@
+from flask import jsonify
+
 from config.dbconfig import pg_config
 import psycopg2
 
 class PersonDAO:
     def __init__(self):
-
-        connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
-                                                            pg_config['user'],
-                                                            pg_config['passwd'],
-                                                            pg_config['host'])
-        self.conn = psycopg2._connect(connection_url)
+        DATABASE_URL = 'postgres://djxaqudhuoodnk:4c981d57b20db4ad50339e1b5121cd03b0b5c6f2d18e67ede1877027e25e2c3c@ec2-3-223-21-106.compute-1.amazonaws.com:5432/d7d9hgkosa7fho'
+        self.conn = psycopg2.connect(DATABASE_URL)
 
     def getAllPerson(self):
         cursor = self.conn.cursor()
@@ -79,6 +77,113 @@ class PersonDAO:
             result.append(row)
         return result
 
+    def acquireResource(self, pid, rid, requestquantity):
+        cursor=self.conn.cursor()
+        query = "select r_availability, x.validation from (select validateRequest(request_quantity,r_quantity) as validation from requests natural inner join resource where r_id=%s) as x natural inner join resource where r_id=%s;"
+        cursor.execute(query,(rid,rid))
+        result = []
+        for row in cursor:
+            result.append(row)
+        if not result:
+            return 'No request'
+        else:
+            availability=result[0][0]
+            validation=result[0][1]
+            if availability==True and validation==True:
+                query = "select r_price from resource where r_id=%s;"
+                cursor.execute(query,(rid,))
+                result = []
+                for row in cursor:
+                    result.append(row)
+                price=result[0][0]
+                if price==0.0:
+                    query = "select p_id, r_id from reserves where p_id =%s and r_id=%s;"
+                    cursor.execute(query, (pid, rid,))
+                    result = []
+                    for row in cursor:
+                        result.append(row)
+                    if result:
+                        return 'Reservation done'
+                    else:
+                        query="insert into reserves(p_id, r_id, resource_total ) values (%s,%s,%s);"
+                        cursor.execute(query,(pid,rid,requestquantity,))
+                        query="update resource set r_quantity= x.r_quantity-%s from (select r_quantity from resource where r_id=%s) as x where r_id=%s;"
+                        cursor.execute(query,(requestquantity,rid,rid))
+                        query="select r_quantity from resource where r_id=%s;"
+                        cursor.execute(query, (rid,))
+                        result = []
+                        for row in cursor:
+                            result.append(row)
+                        quantity = result[0][0]
+                        if quantity==0:
+                            query = "update resource set r_availability = false where r_id=%s;"
+                            cursor.execute(query, (rid,))
+                        self.conn.commit()
+                        return 'Succeed'
+                else:
+                    query="select p_id from offers where p_id=%s;"
+                    cursor.execute(query,(pid,))
+                    result = []
+                    for row in cursor:
+                        result.append(row)
+                    if not result:
+                        return 'No payment'
+                    else:
+                        query="select r_type,r_price from resource where r_id =%s;"
+                        cursor.execute(query,(rid,))
+                        result = []
+                        for row in cursor:
+                            result.append(row)
+                        rlist = result[0][0]
+                        rtotalprice = result[0][1]
+                        query = "select payment_id, payment_total from offers natural inner join payment where p_id =%s;"
+                        cursor.execute(query, (pid,))
+                        result = []
+                        for row in cursor:
+                            result.append(row)
+                        payid=result[0][0]
+                        paytotal=result[0][1]
+                        if paytotal < rtotalprice:
+                            return 'Not enough'
+                        else:
+                            query = "select p_id, r_id from offers natural inner join payment natural inner join resource_order natural inner join buys where p_id=%s and r_id=%s;"
+                            cursor.execute(query, (pid, rid,))
+                            result = []
+                            for row in cursor:
+                                result.append(row)
+                            if result:
+                                return 'Purchase done'
+                            else:
+                                query="insert into resource_order (o_quantity , r_list ,order_total_price ,payment_id ) values ("+requestquantity+",'"+rlist+"',"+str(rtotalprice)+","+str(payid)+") returning o_id;"
+                                cursor.execute(query,)
+                                result = []
+                                for row in cursor:
+                                    result.append(row)
+                                oid=result[0][0]
+                                query="select r_price from resource where r_id=%s;"
+                                cursor.execute(query,(rid,))
+                                result = []
+                                for row in cursor:
+                                    result.append(row)
+                                rprice=result[0][0]
+                                query = "insert into buys(r_id ,o_id ,total_price ,resource_total ) values(%s,"+str(oid)+","+str(rprice)+",%s);"
+                                cursor.execute(query,(rid,requestquantity,))
+                                query = "update resource set r_quantity= x.r_quantity-%s from (select r_quantity from resource where r_id=%s) as x where r_id=%s;"
+                                cursor.execute(query, (requestquantity, rid,rid))
+                                query = "select r_quantity from resource where r_id=%s;"
+                                cursor.execute(query, (rid,))
+                                result = []
+                                for row in cursor:
+                                    result.append(row)
+                                quantity = result[0][0]
+                                if quantity == 0:
+                                    query = "update resource set r_availability = false where r_id=%s;"
+                                    cursor.execute(query, (rid,))
+                                self.conn.commit()
+                                return 'Succeed'
+        self.conn.commit()
+        return 'Not available'
+
     def requestResource(self, p_id, r_id, request_quantity):
         cursor = self.conn.cursor()
         query = "insert into requests(p_id, r_id, request_quantity) values (%s, %s, %s);"
@@ -129,3 +234,16 @@ class PersonDAO:
         for row in cursor:
             result.append(row)
         return result
+
+    def offerPayment(self,pid, payment_type, payment_total):
+        cursor = self.conn.cursor()
+        query = "insert into payment(payment_type,payment_total) values (%s, %s) returning payment_id;"
+        cursor.execute(query, (payment_type, payment_total,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        payment_id = result[0][0]
+        query = "insert into offers(p_id,payment_id) values (%s, %s);"
+        cursor.execute(query, (pid,payment_id,))
+        self.conn.commit()
+        return "New payment"

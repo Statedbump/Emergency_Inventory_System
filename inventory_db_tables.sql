@@ -12,16 +12,17 @@ create table administrator(admin_id serial primary key, permission_key varchar(1
 
 create table resource(r_id serial primary key,r_type varchar(100),r_quantity integer,r_location varchar(150),
 		      r_price float,r_availability BOOLEAN );
+
 		     
 create table resource_order(o_id serial primary key, o_date DATE NULL DEFAULT CURRENT_DATE,o_quantity integer,r_list TEXT, order_total_price float);
 
 create table payment(payment_id serial primary key,payment_type varchar(100),payment_total float,
 		     o_id integer references resource_order(o_id));
 
+
 /* Relations*/
 create table supplies(s_id integer references supplier(s_id),
 		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(s_id,r_id));
-
 create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id), reserve_date DATE NULL DEFAULT CURRENT_DATE
 		      , resource_total integer, primary key(p_id,r_id));
 
@@ -58,6 +59,16 @@ begin
    	elsif r_location='Aibonito' or r_location='Arroyo' or r_location='Barranquitas' or r_location='Cayey' or r_location='Cidra' or r_location='Coamo' or r_location='Comerio' or r_location='Corozal' or r_location='Guayama' or r_location='Naranjito' or r_location='Orocovis' or r_location='Salinas' or r_location='Santa Isabel' or r_location='Villalba' then return 'Guayama';
 	elsif r_location='Caguas' or r_location='Gurabo' or r_location='Humacao' or r_location='Juncos' or r_location='Las Piedras' or r_location='Maunabo' or r_location='Naguabo' or r_location='Patillas' or r_location='San Lorenzo' or r_location='Yabucoa' then return 'Humacao';
 	elsif r_location='Canovanas' or r_location='Carolina' or r_location='Ceiba' or r_location='Culebra' or r_location='Fajardo' or r_location='Loiza' or r_location='Luquillo' or r_location='Rio Grande' or r_location='Trujillo Alto' or r_location='Vieques' then return 'Carolina';
+	end if;
+end $$
+language plpgsql;
+
+create function validaterequest(request_quantity integer, r_quantity integer) returns boolean as $$
+begin
+	if r_quantity < request_quantity then
+		return false;
+	else
+		return true;
 	end if;
 end $$
 language plpgsql;

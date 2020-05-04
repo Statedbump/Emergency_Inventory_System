@@ -4,11 +4,8 @@ import psycopg2
 class ResourcesDAO:
     def __init__(self):
 
-        connection_url = "dbname=%s user=%s password=%s host=%s" % (pg_config['dbname'],
-                                                            pg_config['user'],
-                                                            pg_config['passwd'],
-                                                            pg_config['host'])
-        self.conn = psycopg2._connect(connection_url)
+        DATABASE_URL = 'postgres://djxaqudhuoodnk:4c981d57b20db4ad50339e1b5121cd03b0b5c6f2d18e67ede1877027e25e2c3c@ec2-3-223-21-106.compute-1.amazonaws.com:5432/d7d9hgkosa7fho'
+        self.conn = psycopg2.connect(DATABASE_URL)
 
     def getAllResources(self):
         cursor = self.conn.cursor()

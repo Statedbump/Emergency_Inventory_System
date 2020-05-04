@@ -29,7 +29,17 @@ def landing():
 def signup():
     return render_template("signup.html")
 
+@app.route('/ERIApp/person/<int:p_id>/acquire',
+           methods=['POST'])
+def acquireResource(p_id):
+    if request.method == 'POST':
+        return PersonHandler().acquireResource(p_id, request.form)
 
+@app.route('/ERIApp/person/<int:p_id>/payment',
+           methods=['POST'])
+def offerPayment(p_id):
+    if request.method == 'POST':
+        return PersonHandler().offerPayment(p_id, request.form)
 
 #-----Person------
 @app.route('/ERIApp/person', methods=['GET', 'POST'])
