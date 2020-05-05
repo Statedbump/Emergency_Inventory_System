@@ -448,5 +448,23 @@ class ResourcesHandler:
         else:
             return jsonify('Unexpected attributes in post request'),401
 
+    def getAllResourcesPurchases(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getAllResourcesPurchases()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_requests_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesPurchases=result_list)
+
+    def getAllResourcesReserves(self):
+        dao = ResourcesDAO()
+        resource_list = dao.getAllResourcesReserves()
+        result_list = []
+        for row in resource_list:
+            result = self.build_resources_requests_dict(row)
+            result_list.append(result)
+        return jsonify(ResourcesReserves=result_list)
+
 
 
