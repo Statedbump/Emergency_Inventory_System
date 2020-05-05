@@ -321,4 +321,21 @@ class ResourcesDAO:
         return result
 
     #Insert Update Delete
+    def getAllResourcesPurchases(self):
+        cursor = self.conn.cursor()
+        query = 'select p_id, r_id, r_type from resource natural inner join offers natural inner join  payment natural inner join resource_order natural inner join buys;'
+        cursor.execute(query, )
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
+
+    def getAllResourcesReserves(self):
+        cursor = self.conn.cursor()
+        query = 'select p_id, r_id, r_type from reserves natural inner join resource;'
+        cursor.execute(query, )
+        result = []
+        for row in cursor:
+            result.append(row)
+        return result
 
