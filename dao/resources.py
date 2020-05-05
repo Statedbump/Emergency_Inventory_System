@@ -236,36 +236,6 @@ class ResourcesDAO:
         return result
 
 
-    """
-    This can be made into a SQL function for faster functionality
-    """
-   
-
-    
-    """
-    #here we don not need all info of generalized resources
-    def getResourcesByAvailability(self,availability = TRUE):
-        cur = self.conn.cursor()
-        query = 'SELECT * FROM resource ORDER BY r_type ASC WHERE r_availability = %s;'
-        cur.execute(query,(availability,))
-        resutl = []
-        
-        for row in cur:
-            result.append(row)
-        return result
-    """
-    
-    """
-      This query function will get resources by priced 
-      but it will also query the resources the are less or equal to that price
-    
-    def getResourceByPrice(self,price):
-        cur = self.conn.cursor()
-        query ="SELECT * FROM resource  ORDER BY r_type ASC WHERE r_price < = %f;"
-
-    
-    """
-
     def getCountResourcesInNeedBySenateRegion(self):
         cur = self.conn.cursor()
         query = 'select sr.r_type, sum(sr.request_quantity) as resources_in_need, sr.senate_region from (SELECT requests.p_id, requests.r_id, r_type, request_quantity, get_senate_region(r_location) as senate_region from resource natural inner join requests group by senate_region, requests.p_id, requests.r_id, request_quantity, r_type order by senate_region) as sr group by sr.r_type, sr.senate_region order by sr.r_type, sr.senate_region;'
@@ -321,4 +291,122 @@ class ResourcesDAO:
         return result
 
     #Insert Update Delete
+     def insert(self,r_type ,r_quantity, r_location ,r_price,r_availability,  
+                , water_type= None ,measurement_unit = None 
+                ,fuel_type= None , fuel_octane_rating = None
+                ,food_type = None 
+                ,g_brand=None , g_fuel_type =None ,g_power = None
+                , batt_type = None, batt_volts = None )
+        
+        cursor = self.conn.cursor()
+        q = "insert into resource(r_type ,r_quantity, r_location ,r_price,r_availability) values(%s,%s,%s,%s,%s) RETURNING r_id;"
+        cursor.execute(q,(r_type,r_quantity,r_location,r_price,r_availability,))
+        r_id = cursor.fetchone()[0]
+
+        if 'water' in str.lower(r_type) and water_type is not None and measurement_unit is not NONE:
+            q2 = "insert into water(water_type, measurement_unit,r_id) values(%s,%s,%s);"
+            cursor.execute(q2,(water_type,measurement_unit,r_id,))
+        elif 'food' in str.lower(r_type) and food_type is not None:
+            q2 = "insert into food(food_type,r_id) values(%s,%s);"
+            cursor.execute(q2,(food_type,r_id))
+        elif 'fuel'in str.lower(r_type) and fuel_type is not None and fuel_octane_rating is not None:
+            q2 = "inser into fuel(fuel_type, fuel_octane_rating, r_id) values(%s,%s,%s);"
+            cursor.execute(q2,(fuel_type,fuel_octane_rating,r_id))
+        elif 'generator' in str.lower(r_type) and g_brand is not None and g_fuel_type is not None and g_power is not None:
+            q2 = 'insert into generator(g_brand,g_fuel_type,g_power,r_id) values(%s,%s,%s,%s);'
+            cursor.execute(q2,(g_brand,g_fuel_type,g_power,r_id,))
+        elif 'battery' in str.lower(r_type) and batt_type is not None and batt_volts is not None:
+            q2 = "insert into battery(batt_type,batt_volts,r_id) values(%s,%s,%s);"
+            cursor.execute(q2,(batt_type,batt_volts,r_id))
+        self.conn.commit()
+        return r_id
+
+            
+
+
+
+
+    def delete(self, r_id):
+         cur = self.conn.cursor()
+         q = "DELETE FROM resource WHERE r_id = %s"
+         cur.execute(q,(r_id,))
+         self.conn.commit()
+         return r_id
+
+    def update(self,r_id ,r_type ,r_quantity, r_location ,r_price,r_availability,  
+                , water_type= None ,measurement_unit = None 
+                ,fuel_type= None , fuel_octane_rating = None
+                ,food_type = None 
+                ,g_brand=None , g_fuel_type =None ,g_power = None
+                , batt_type = None, batt_volts = None )
+        
+        cursor = self.conn.cursor()
+        q1 = 'UPDATE resource set r_type=%s, r_quantity = %s,r_price =%s,r_avaliability = %s where r_id = %s;'
+        cursor.execute(q1,(r_type,r_quantity,r_location,r_price,r_availability,r_id,))
+
+        if 'water' in str.lower(r_type):
+            if water_type is not None and  measurement_unit  is not None:
+                q2 = "UPDATE water set water_type = %s , measurement_unit = %s where r_id = %s;"
+                cursor.execute(q2,(w_type,measurement_unit,r_id,))
+            elif water_type is None and measurement_unit is not None:
+                q2 = "UPDATE water set measurement_unit = %s where r_id = %s;"
+                cursor.execute(q2,(measurement_unit,r_id,))
+            elif water_type is not None and measurement_unit is None:
+                q2 = "UPDATE water set water_type = %s  where r_id = %s;"
+                cursor.execute(q2,(w_type,r_id,))
+
+        elif 'fuel' in str.lower(r_type):
+            if fuel_type is not None and  fuel_octane_rating is not None:
+                q2 = "UPDATE fuel set fuel_type = %s , fuel_octane_rating = %s where r_id = %s;"
+                cursor.execute(q2,(fuel,fuel_octane_rating,r_id,))
+            elif fuel_type is None and measurement_unit  is not None:
+                q2 = "UPDATE fuel set measurement_unit = %s where r_id = %s;"
+                cursor.execute(q2,(measurement_unit,r_id,))
+            elif fuel_type is not None and measurement_unit is None:
+                q2 = "UPDATE fuel set fuel_type = %s  where r_id = %s;"
+                cursor.execute(q2,(fuel_type,r_id,))
+
+         elif 'food' in str.lower(r_type):
+            if fuel_type is not None: 
+                q2 = "UPDATE food set food_type = %s  where r_id = %s;"
+                cursor.execute(q2,(food_type,r_id,))
+
+        elif 'generator' in str.lower(r_type):
+            if g_brand is not None and  g_fuel_type is not None and g_power is not None :
+                q2 = "UPDATE generator set g_brand = %s, g_fuel_type = %s, g_power = %s where r_id = %s;"
+                cursor.execute(q2,(g_brand,g_fuel_type,g_power,r_id,))
+            elif g_brand is None and  g_fuel_type is not None and g_power is not None :
+                q2 = "UPDATE generator set g_fuel_type = %s, g_power = %s where r_id = %s;"
+                cursor.execute(q2,(g_fuel_type,g_power,r_id,))
+            elif g_brand is not None and  g_fuel_type is None and g_power is not None :
+                q2 = "UPDATE generator set g_brand = %s, g_power = %s where r_id = %s;"
+                cursor.execute(q2,(g_brand,g_power,r_id,))
+            elif g_brand is not None and  g_fuel_type is not None and g_power is  None :
+                q2 = "UPDATE generator set g_brand = %s, g_fuel_type = %s where r_id = %s;"
+                cursor.execute(q2,(g_brand,g_fuel_type,r_id,))
+            elif g_brand is not None and  g_fuel_type is None and g_power is  None :
+                q2 = "UPDATE generator set g_brand = %s where r_id = %s;"
+                cursor.execute(q2,(g_brand,r_id,))
+            elif g_brand is None and  g_fuel_type is not None and g_power is  None :
+                q2 = "UPDATE generator set g_fuel_type = %s where r_id = %s;"
+                cursor.execute(q2,(g_fuel_type,r_id,))
+            elif g_brand is None and  g_fuel_type is None and g_power is not None :
+                q2 = "UPDATE generator set g_power = %s where r_id = %s;"
+                cursor.execute(q2,(g_power,r_id,))
+
+        elif 'battery' in str.lower(r_type):
+            if batt_type is not None and  batt_volts  is not None:
+                q2 = "UPDATE battery set batt_type = %s , batt_volts = %s where r_id = %s;"
+                cursor.execute(q2,(w_type,batt_volts,r_id,))
+            elif batt_type is None and batt_volts is not None:
+                q2 = "UPDATE battery set batt_volts = %s where r_id = %s;"
+                cursor.execute(q2,(batt_volts,r_id,))
+            elif batt_type is not None and batt_volts is None:
+                q2 = "UPDATE battery set batt_type = %s  where r_id = %s;"
+                cursor.execute(q2,(batt_type,r_id,))
+        self.conn.commit()
+
+        return r_id
+            
+        
 

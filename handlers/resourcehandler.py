@@ -388,7 +388,7 @@ class ResourcesHandler:
             result_list.append(result)
         return jsonify(PersonByResourcesID=result_list)
 
-
+    #Fix insert
     def insertResource(self,form):
         if len(form) < 5 or len(form) >8:
             return jsonify(Error = "Malformed pst Request"),400
@@ -398,6 +398,7 @@ class ResourcesHandler:
             r_location  = form['r_location']
             r_price = form['r_price']
             r_availability = form['r_availability']
+            
             if 'water' in r_type:
                 water_type = form['water_type']
                 measurement_unit = form['measurement_unit']

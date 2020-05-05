@@ -21,20 +21,19 @@ create table payment(payment_id serial primary key,payment_type varchar(100),pay
 
 
 /* Relations*/
-create table supplies(s_id integer references supplier(s_id),
-		      r_id integer references resource(r_id),supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(s_id,r_id));
-create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id), reserve_date DATE NULL DEFAULT CURRENT_DATE
+create table supplies(s_id integer references supplier(s_id),r_id integer references resource(r_id) on DELETE CASCADE,supply_date DATE NULL DEFAULT CURRENT_DATE, primary key(s_id,r_id));
+create table reserves(p_id integer references person(p_id),r_id integer references resource(r_id) on DELETE CASCADE, reserve_date DATE NULL DEFAULT CURRENT_DATE
 		      , resource_total integer, primary key(p_id,r_id));
 
 
-create table requests(p_id integer references person(p_id),r_id integer references resource(r_id)
+create table requests(p_id integer references person(p_id),r_id integer references resource(r_id) on DELETE CASCADE
 		      ,request_date DATE NULL DEFAULT CURRENT_DATE, request_quantity integer, primary key(p_id,r_id));
 
 
-create table manages(admin_id integer references administrator(admin_id), r_id integer references resource(r_id));
+create table manages(admin_id integer references administrator(admin_id),r_id integer references resource(r_id) on DELETE CASCADE);
 
 
-create table buys(r_id integer references resource(r_id), o_id integer references resource_order(o_id),total_price float, resource_total integer,
+create table buys(r_id integer references resource(r_id) on DELETE CASCADE, o_id integer references resource_order(o_id),total_price float, resource_total integer,
 		 primary key(r_id,o_id));
 
 
@@ -42,11 +41,11 @@ create table offers(p_id integer references person(p_id), payment_id integer ref
 		    primary key(p_id,payment_id));	     
 
 /* Specialization of Resource*/
-create table water(w_id serial primary key, water_type varchar(50),measurement_unit varchar(50),
-		   r_id integer references resource(r_id));
-create table fuel(fuel_id serial primary key,fuel_type varchar(50), fuel_octane_rating integer,
-		  r_id integer references  resource(r_id));
-create table food(food_id serial primary key,food_type varchar(100),r_id integer references resource(r_id));
+create table water(w_id serial primary key, water_type varchar(50),measurement_unit varchar(50), r_id integer references resource(r_id) on DELETE CASCADE );
+create table fuel(fuel_id serial primary key,fuel_type varchar(50), fuel_octane_rating integer, r_id integer references  resource(r_id) on DELETE CASCADE );
+create table food(food_id serial primary key,food_type varchar(100),r_id integer references resource(r_id) on DELETE CASCADE );
+create table generator(gen_id serial primary key,g_brand varchar(100), g_fuel_type varchar(100),g_power int ,r_id integer references resource(r_id) on DELETE CASCADE );
+create table battery(batt_id serial primary key , batt_type varchar(20), batt_volts float ,r_id integer references resource(r_id) on DELETE CASCADE );
 
 /*Senate Region Computation Function*/
 create function get_senate_region(r_location varchar(150)) returns varchar(150) as $$
@@ -72,3 +71,4 @@ begin
 	end if;
 end $$
 language plpgsql;
+
