@@ -226,15 +226,6 @@ class ResourcesDAO:
             result.append(row)
         return result
 
-    def getPersonByResourceId(self,r_id):# This should be get person by requested r-id or by purchased r_id or reserved r_id
-        curr = self.conn.cursor()
-        query = "select * from supplier NATURAL INNER JOIN supplies where r_id = %s"
-        curr.execute(query, (r_id,))
-        result = []
-        for row in curr:
-            result.append(row)
-        return result
-
 
     def getCountResourcesInNeedBySenateRegion(self):
         cur = self.conn.cursor()
@@ -291,39 +282,54 @@ class ResourcesDAO:
         return result
 
     #Insert Update Delete
-     def insert(self,r_type ,r_quantity, r_location ,r_price,r_availability,  
-                , water_type= None ,measurement_unit = None 
-                ,fuel_type= None , fuel_octane_rating = None
-                ,food_type = None 
-                ,g_brand=None , g_fuel_type =None ,g_power = None
-                , batt_type = None, batt_volts = None )
-        
+    def insert(self,r_type ,r_quantity, r_location ,r_price,r_availability):
         cursor = self.conn.cursor()
         q = "insert into resource(r_type ,r_quantity, r_location ,r_price,r_availability) values(%s,%s,%s,%s,%s) RETURNING r_id;"
         cursor.execute(q,(r_type,r_quantity,r_location,r_price,r_availability,))
         r_id = cursor.fetchone()[0]
-
-        if 'water' in str.lower(r_type) and water_type is not None and measurement_unit is not NONE:
-            q2 = "insert into water(water_type, measurement_unit,r_id) values(%s,%s,%s);"
-            cursor.execute(q2,(water_type,measurement_unit,r_id,))
-        elif 'food' in str.lower(r_type) and food_type is not None:
-            q2 = "insert into food(food_type,r_id) values(%s,%s);"
-            cursor.execute(q2,(food_type,r_id))
-        elif 'fuel'in str.lower(r_type) and fuel_type is not None and fuel_octane_rating is not None:
-            q2 = "inser into fuel(fuel_type, fuel_octane_rating, r_id) values(%s,%s,%s);"
-            cursor.execute(q2,(fuel_type,fuel_octane_rating,r_id))
-        elif 'generator' in str.lower(r_type) and g_brand is not None and g_fuel_type is not None and g_power is not None:
-            q2 = 'insert into generator(g_brand,g_fuel_type,g_power,r_id) values(%s,%s,%s,%s);'
-            cursor.execute(q2,(g_brand,g_fuel_type,g_power,r_id,))
-        elif 'battery' in str.lower(r_type) and batt_type is not None and batt_volts is not None:
-            q2 = "insert into battery(batt_type,batt_volts,r_id) values(%s,%s,%s);"
-            cursor.execute(q2,(batt_type,batt_volts,r_id))
         self.conn.commit()
         return r_id
 
             
+    def insertWater(self,water_type ,measurement_unit, r_id ):
+        cursor = self.conn.cursor()
+        q2 = "insert into water(water_type, measurement_unit,r_id) values(%s,%s,%s) returning w_id;"
+        cursor.execute(q2, (water_type, measurement_unit, r_id,))
+        w_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return w_id
 
+    def insertFuel(self,fuel_type ,fuel_octane_rating, r_id ):
+        cursor = self.conn.cursor()
+        q2 = "insert into fuel(fuel_type, fuel_octane_rating, r_id) values(%s,%s,%s) returning fuel_id;"
+        cursor.execute(q2, (fuel_type, fuel_octane_rating, r_id))
+        fuel_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return fuel_id
 
+    def insertFood(self,food_type , r_id ):
+        cursor = self.conn.cursor()
+        q2 = "insert into food(food_type,r_id) values(%s,%s) returning food_id;"
+        cursor.execute(q2, (food_type, r_id))
+        food_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return food_id
+
+    def insertBattery(self,batt_type ,batt_volts, r_id ):
+        cursor = self.conn.cursor()
+        q2 = "insert into battery(batt_type,batt_volts,r_id) values(%s,%s,%s) returning batt_id;"
+        cursor.execute(q2, (batt_type, batt_volts, r_id))
+        batt_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return batt_id
+
+    def insertGenerator(self,g_brand ,g_fuel_type, g_power, r_id ):
+        cursor = self.conn.cursor()
+        q2 = 'insert into generator(g_brand,g_fuel_type,g_power,r_id) values(%s,%s,%s,%s) returning gen_id;'
+        cursor.execute(q2, (g_brand, g_fuel_type, g_power, r_id,))
+        gen_id = cursor.fetchone()[0]
+        self.conn.commit()
+        return gen_id
 
 
     def delete(self, r_id):
@@ -333,12 +339,12 @@ class ResourcesDAO:
          self.conn.commit()
          return r_id
 
-    def update(self,r_id ,r_type ,r_quantity, r_location ,r_price,r_availability,  
+    def update(self,r_id ,r_type ,r_quantity, r_location ,r_price,r_availability
                 , water_type= None ,measurement_unit = None 
                 ,fuel_type= None , fuel_octane_rating = None
                 ,food_type = None 
                 ,g_brand=None , g_fuel_type =None ,g_power = None
-                , batt_type = None, batt_volts = None )
+                , batt_type = None, batt_volts = None ):
         
         cursor = self.conn.cursor()
         q1 = 'UPDATE resource set r_type=%s, r_quantity = %s,r_price =%s,r_avaliability = %s where r_id = %s;'
@@ -347,18 +353,18 @@ class ResourcesDAO:
         if 'water' in str.lower(r_type):
             if water_type is not None and  measurement_unit  is not None:
                 q2 = "UPDATE water set water_type = %s , measurement_unit = %s where r_id = %s;"
-                cursor.execute(q2,(w_type,measurement_unit,r_id,))
+                cursor.execute(q2,(water_type,measurement_unit,r_id,))
             elif water_type is None and measurement_unit is not None:
                 q2 = "UPDATE water set measurement_unit = %s where r_id = %s;"
                 cursor.execute(q2,(measurement_unit,r_id,))
             elif water_type is not None and measurement_unit is None:
                 q2 = "UPDATE water set water_type = %s  where r_id = %s;"
-                cursor.execute(q2,(w_type,r_id,))
+                cursor.execute(q2,(water_type,r_id,))
 
         elif 'fuel' in str.lower(r_type):
             if fuel_type is not None and  fuel_octane_rating is not None:
                 q2 = "UPDATE fuel set fuel_type = %s , fuel_octane_rating = %s where r_id = %s;"
-                cursor.execute(q2,(fuel,fuel_octane_rating,r_id,))
+                cursor.execute(q2,(fuel_type,fuel_octane_rating,r_id,))
             elif fuel_type is None and measurement_unit  is not None:
                 q2 = "UPDATE fuel set measurement_unit = %s where r_id = %s;"
                 cursor.execute(q2,(measurement_unit,r_id,))
@@ -366,7 +372,7 @@ class ResourcesDAO:
                 q2 = "UPDATE fuel set fuel_type = %s  where r_id = %s;"
                 cursor.execute(q2,(fuel_type,r_id,))
 
-         elif 'food' in str.lower(r_type):
+        elif 'food' in str.lower(r_type):
             if fuel_type is not None: 
                 q2 = "UPDATE food set food_type = %s  where r_id = %s;"
                 cursor.execute(q2,(food_type,r_id,))
@@ -397,7 +403,7 @@ class ResourcesDAO:
         elif 'battery' in str.lower(r_type):
             if batt_type is not None and  batt_volts  is not None:
                 q2 = "UPDATE battery set batt_type = %s , batt_volts = %s where r_id = %s;"
-                cursor.execute(q2,(w_type,batt_volts,r_id,))
+                cursor.execute(q2,(batt_type,batt_volts,r_id,))
             elif batt_type is None and batt_volts is not None:
                 q2 = "UPDATE battery set batt_volts = %s where r_id = %s;"
                 cursor.execute(q2,(batt_volts,r_id,))
@@ -424,6 +430,25 @@ class ResourcesDAO:
         cursor.execute(query, )
         result = []
         for row in cursor:
+            result.append(row)
+        return result
+
+    def getResourcesByTypeAndAvaliability(self, r_type, r_availability):
+        cur = self.conn.cursor()
+        query = 'SELECT * FROM  resource WHERE r_type = %s AND r_availability = %s;'
+        cur.execute(query, (r_type, r_availability,))
+
+        result = []
+        for row in cur:
+            result.append(row)
+        return result
+
+    def getResourceByAvailability(self, r_availability):
+        cur = self.conn.cursor()
+        query = 'SELECT * FROM  resource WHERE r_availability = %s;'
+        cur.execute(query, (r_availability,))
+        result = []
+        for row in cur:
             result.append(row)
         return result
 

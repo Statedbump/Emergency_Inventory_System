@@ -126,7 +126,7 @@ class ResourcesHandler:
         result['login_id'] = row[7]
         return result
 
-    def build_resource_attributes(self,r_id,r_type,r_quantity,r_location,r_price,r_availability, w_id =None ,water_type=None,measurement_unit=None,fuel_id=None,fuel_type=None,fuel_octane_rating=None,food_id=None,food_type=None):
+    def build_resource_attributes(self,r_id,r_type,r_quantity,r_location,r_price,r_availability, w_id =None ,water_type=None,measurement_unit=None,fuel_id=None,fuel_type=None,fuel_octane_rating=None,food_id=None,food_type=None,batt_id=None,batt_type=None,batt_volts=None,gen_id=None,g_brand=None,g_fuel_type=None,g_power=None):
         result = {}
         result['r_id'] = r_id
         result['r_type'] = r_type
@@ -134,18 +134,26 @@ class ResourcesHandler:
         result['r_location'] = r_location
         result['r_price'] = r_price
         result['r_availability'] = r_availability
-        if 'water' in r_type:
+        if 'water' in result['r_type']:
             result['w_id'] = w_id
             result['water_type'] = water_type
             result['measurement_unit'] = measurement_unit
-        elif 'fuel' in r_type:
+        elif 'fuel' in result['r_type']:
             result['fuel_id'] = fuel_id
             result['fuel_type']= fuel_type
             result['fuel_octane_rating']=fuel_octane_rating
-        elif'food' in r_type:
+        elif 'food' in result['r_type']:
             result['food_id'] = food_id
             result['food_type'] = food_type
-        
+        elif 'battery' in result['r_type']:
+            result['batt_id'] = batt_id
+            result['batt_type']= batt_type
+            result['batt_volts']=batt_volts
+        elif 'generator' in result['r_type']:
+            result['gen_id'] = gen_id
+            result['g_fuel_type']= g_fuel_type
+            result['g_brand']=g_brand
+            result['g_power'] = g_power
         return result
 
     def getAllResources(self):
@@ -372,21 +380,6 @@ class ResourcesHandler:
             result_list.append(result)
         return jsonify(SupplierByResourcesID=result_list)
 
-#needs to be
-    def getPersonByResourceId(self,r_id):
-        p1 = (1,'Joe','F','Chill','joe.chill@upr.edu','Jayuyas','7877787811',1)
-        p2 = (2,'Tito','M','Kayak','titokayak@gmail.com','San Juan','9399399393',2)
-        resource = (2,'Batteries',5,'Mayaguez',5.0,True)
-
-        person_list = {p1,p2}
-        if not resource:
-            return jsonify(Error="Resource Not Found"), 404
-
-        result_list = []
-        for row in person_list:
-            result = self.buld_person_dict(row)
-            result_list.append(result)
-        return jsonify(PersonByResourcesID=result_list)
 
     #Fix insert
     def insertResource(self,form):
@@ -398,25 +391,44 @@ class ResourcesHandler:
             r_location  = form['r_location']
             r_price = form['r_price']
             r_availability = form['r_availability']
-            
-            if 'water' in r_type:
-                water_type = form['water_type']
-                measurement_unit = form['measurement_unit']
-            if 'fuel' in r_type:
-                fuel_type = form['fuel_type']
-                fuel_octane_rating = form['fuel_octane_rating']
-            if 'food' in r_type:
-                food_type = form['food_type']
-            
             if r_type and r_quantity and r_location and r_price and r_availability:
-                if water_type and measurement_unit:
-                    result = self.build_resource_attributes()
-                if fuel_type and fuel_octane_rating:
-                    result = self.build_resource_attributes()
-                if food_type:
-                    result = self.build_resource_attributes()
-
-                return jsonify(Resource=result),201
+                dao = ResourcesDAO()
+                r_id = dao.insert(r_type,r_quantity,r_location,r_price,r_availability)
+                result = self.build_resource_attributes(r_id, r_type, r_quantity, r_location, r_price, r_availability)
+                if 'water' in r_type:
+                    water_type = form['water_type']
+                    measurement_unit = form['measurement_unit']
+                    dao = ResourcesDAO()
+                    w_id = dao.insertWater( water_type, measurement_unit,r_id)
+                    water = self.build_resource_attributes(r_id,r_type,r_quantity,r_location,r_price,r_availability,w_id, water_type,measurement_unit)
+                    return jsonify(Water=water), 201
+                if 'fuel' in r_type:
+                    fuel_type = form['fuel_type']
+                    fuel_octane_rating = form['fuel_octane_rating']
+                    dao = ResourcesDAO()
+                    fuel_id = dao.insertFuel(fuel_type, fuel_octane_rating,r_id)
+                    fuel = self.build_resource_attributes(r_id, r_type, r_quantity,r_location, r_price, r_availability, fuel_id, fuel_type, fuel_octane_rating,)
+                    return jsonify(Fuel=fuel), 201
+                if 'food' in r_type:
+                    food_type = form['food_type']
+                    food_id = dao.insertFood(food_type, r_id)
+                    food = self.build_resource_attributes(r_id, r_type,r_quantity, r_location, r_price, r_availability, food_id, food_type)
+                    return jsonify(Food=food), 201
+                if 'battery' in r_type:
+                    batt_type = form['batt_type']
+                    batt_volts = form['batt_volts']
+                    batt_id = dao.insertBattery(batt_type, batt_volts, r_id)
+                    batt = self.build_resource_attributes(r_id, r_type, r_quantity, r_location,r_price, r_availability,  batt_id, batt_type, batt_volts,)
+                    return jsonify(Battery=batt), 201
+                if 'generator' in r_type:
+                    g_brand = form['g_brand']
+                    g_fuel_type = form['g_fuel_type']
+                    g_power = form['g_power']
+                    gen_id = dao.insertGenerator(g_brand,g_fuel_type, g_power, r_id)
+                    gen = self.build_resource_attributes(r_id,r_type, r_quantity,r_location, r_price, r_availability, gen_id, g_fuel_type, g_power, g_brand)
+                    return jsonify(Generator=gen), 201
+                else:
+                    return jsonify(Resource=result), 201
             else:
                 return jsonify('Unexpected attributes in post request'),401
             

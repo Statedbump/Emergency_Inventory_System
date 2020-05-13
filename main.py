@@ -179,6 +179,14 @@ def getAllResources():
 def getAllResourcesRequests():
     return ResourcesHandler().getAllResourcesRequests()
 
+@app.route('/ERIApp/resources/reserves', methods=['GET'])
+def getAllResourcesReserves():
+    return ResourcesHandler().getAllResourcesReserves()
+
+@app.route('/ERIApp/resources/purchases', methods=['GET'])
+def getAllResourcesPurchases():
+    return ResourcesHandler().getAllResourcesPurchases()
+
 @app.route('/ERIApp/resources/requests/SortByResourceName', methods=['GET'])
 def sortResourcesRequestsByResourceName():
     return ResourcesHandler().sortResourcesRequestsByResourceName()
@@ -239,10 +247,6 @@ def getResourceById(r_id):
         pass
     else:
         return jsonify(Error = "Method not allowed"), 405
-
-@app.route('/ERIApp/resources/<int:r_id>/person')
-def getPersonByResourceId(r_id):
-    return ResourcesHandler().getPersonByResourceId(r_id)
 
 @app.route('/ERIApp/resources/<int:r_id>/supplier')
 def getSupplierByResourceId(r_id):
