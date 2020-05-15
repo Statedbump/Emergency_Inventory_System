@@ -242,9 +242,9 @@ def getResourceById(r_id):
     if request.method == 'GET':
         return ResourcesHandler().getResourceById(r_id)
     elif request.method == 'PUT':#Update
-        pass
+        return ResourcesHandler().updateResource(r_id, request.form)
     elif request.method == 'DELETE':
-        pass
+        return ResourcesHandler().deleteResource(r_id)
     else:
         return jsonify(Error = "Method not allowed"), 405
 

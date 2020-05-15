@@ -282,7 +282,7 @@ class ResourcesDAO:
         return result
 
     #Insert Update Delete
-    def insert(self,r_type ,r_quantity, r_location ,r_price,r_availability):
+    def insertResource(self, r_type, r_quantity, r_location, r_price, r_availability):
         cursor = self.conn.cursor()
         q = "insert into resource(r_type ,r_quantity, r_location ,r_price,r_availability) values(%s,%s,%s,%s,%s) RETURNING r_id;"
         cursor.execute(q,(r_type,r_quantity,r_location,r_price,r_availability,))
@@ -332,89 +332,57 @@ class ResourcesDAO:
         return gen_id
 
 
-    def delete(self, r_id):
+    def deleteResource(self, r_id):
          cur = self.conn.cursor()
-         q = "DELETE FROM resource WHERE r_id = %s"
-         cur.execute(q,(r_id,))
+         q = 'DELETE FROM supplies WHERE r_id=%s;'
+         cur.execute(q, (r_id,))
+         q1 = "DELETE FROM resource WHERE r_id = %s"
+         cur.execute(q1,(r_id,))
          self.conn.commit()
          return r_id
 
-    def update(self,r_id ,r_type ,r_quantity, r_location ,r_price,r_availability
-                , water_type= None ,measurement_unit = None 
-                ,fuel_type= None , fuel_octane_rating = None
-                ,food_type = None 
-                ,g_brand=None , g_fuel_type =None ,g_power = None
-                , batt_type = None, batt_volts = None ):
-        
+    def updateResource(self,r_id ,r_type ,r_quantity, r_location ,r_price,r_availability):
         cursor = self.conn.cursor()
-        q1 = 'UPDATE resource set r_type=%s, r_quantity = %s,r_price =%s,r_avaliability = %s where r_id = %s;'
-        cursor.execute(q1,(r_type,r_quantity,r_location,r_price,r_availability,r_id,))
-
-        if 'water' in str.lower(r_type):
-            if water_type is not None and  measurement_unit  is not None:
-                q2 = "UPDATE water set water_type = %s , measurement_unit = %s where r_id = %s;"
-                cursor.execute(q2,(water_type,measurement_unit,r_id,))
-            elif water_type is None and measurement_unit is not None:
-                q2 = "UPDATE water set measurement_unit = %s where r_id = %s;"
-                cursor.execute(q2,(measurement_unit,r_id,))
-            elif water_type is not None and measurement_unit is None:
-                q2 = "UPDATE water set water_type = %s  where r_id = %s;"
-                cursor.execute(q2,(water_type,r_id,))
-
-        elif 'fuel' in str.lower(r_type):
-            if fuel_type is not None and  fuel_octane_rating is not None:
-                q2 = "UPDATE fuel set fuel_type = %s , fuel_octane_rating = %s where r_id = %s;"
-                cursor.execute(q2,(fuel_type,fuel_octane_rating,r_id,))
-            elif fuel_type is None and measurement_unit  is not None:
-                q2 = "UPDATE fuel set measurement_unit = %s where r_id = %s;"
-                cursor.execute(q2,(measurement_unit,r_id,))
-            elif fuel_type is not None and measurement_unit is None:
-                q2 = "UPDATE fuel set fuel_type = %s  where r_id = %s;"
-                cursor.execute(q2,(fuel_type,r_id,))
-
-        elif 'food' in str.lower(r_type):
-            if fuel_type is not None: 
-                q2 = "UPDATE food set food_type = %s  where r_id = %s;"
-                cursor.execute(q2,(food_type,r_id,))
-
-        elif 'generator' in str.lower(r_type):
-            if g_brand is not None and  g_fuel_type is not None and g_power is not None :
-                q2 = "UPDATE generator set g_brand = %s, g_fuel_type = %s, g_power = %s where r_id = %s;"
-                cursor.execute(q2,(g_brand,g_fuel_type,g_power,r_id,))
-            elif g_brand is None and  g_fuel_type is not None and g_power is not None :
-                q2 = "UPDATE generator set g_fuel_type = %s, g_power = %s where r_id = %s;"
-                cursor.execute(q2,(g_fuel_type,g_power,r_id,))
-            elif g_brand is not None and  g_fuel_type is None and g_power is not None :
-                q2 = "UPDATE generator set g_brand = %s, g_power = %s where r_id = %s;"
-                cursor.execute(q2,(g_brand,g_power,r_id,))
-            elif g_brand is not None and  g_fuel_type is not None and g_power is  None :
-                q2 = "UPDATE generator set g_brand = %s, g_fuel_type = %s where r_id = %s;"
-                cursor.execute(q2,(g_brand,g_fuel_type,r_id,))
-            elif g_brand is not None and  g_fuel_type is None and g_power is  None :
-                q2 = "UPDATE generator set g_brand = %s where r_id = %s;"
-                cursor.execute(q2,(g_brand,r_id,))
-            elif g_brand is None and  g_fuel_type is not None and g_power is  None :
-                q2 = "UPDATE generator set g_fuel_type = %s where r_id = %s;"
-                cursor.execute(q2,(g_fuel_type,r_id,))
-            elif g_brand is None and  g_fuel_type is None and g_power is not None :
-                q2 = "UPDATE generator set g_power = %s where r_id = %s;"
-                cursor.execute(q2,(g_power,r_id,))
-
-        elif 'battery' in str.lower(r_type):
-            if batt_type is not None and  batt_volts  is not None:
-                q2 = "UPDATE battery set batt_type = %s , batt_volts = %s where r_id = %s;"
-                cursor.execute(q2,(batt_type,batt_volts,r_id,))
-            elif batt_type is None and batt_volts is not None:
-                q2 = "UPDATE battery set batt_volts = %s where r_id = %s;"
-                cursor.execute(q2,(batt_volts,r_id,))
-            elif batt_type is not None and batt_volts is None:
-                q2 = "UPDATE battery set batt_type = %s  where r_id = %s;"
-                cursor.execute(q2,(batt_type,r_id,))
+        q1 = 'UPDATE resource set r_type=%s, r_quantity = %s, r_location=%s,r_price =%s,r_availability = %s where r_id = %s;'
+        cursor.execute(q1, (r_type, r_quantity, r_location, r_price, r_availability, r_id,))
         self.conn.commit()
-
         return r_id
-            
-        
+
+    def updateFood(self,food_type, r_id):
+        cursor = self.conn.cursor()
+        q2 = 'UPDATE food set food_type = %s  where r_id = %s;'
+        cursor.execute(q2, (food_type, r_id,))
+        self.conn.commit()
+        return r_id
+
+    def updateFuel(self, fuel_type, fuel_octane_rating, r_id):
+        cursor = self.conn.cursor()
+        q2 = 'UPDATE fuel set fuel_type = %s , fuel_octane_rating = %s where r_id = %s;'
+        cursor.execute(q2, (fuel_type, fuel_octane_rating, r_id,))
+        self.conn.commit()
+        return r_id
+
+    def updateWater(self, water_type, measurement_unit, r_id):
+        cursor = self.conn.cursor()
+        q2 = 'UPDATE water set water_type = %s , measurement_unit = %s where r_id = %s;'
+        cursor.execute(q2, (water_type, measurement_unit, r_id,))
+        self.conn.commit()
+        return r_id
+
+    def updateBattery(self, batt_type, batt_volts, r_id):
+        cursor = self.conn.cursor()
+        q2 = 'UPDATE battery set batt_type = %s , batt_volts = %s where r_id = %s;'
+        cursor.execute(q2, (batt_type, batt_volts, r_id,))
+        self.conn.commit()
+        return r_id
+
+    def updateGenerator(self,g_brand, g_fuel_type, g_power, r_id):
+        cursor = self.conn.cursor()
+        q2 = 'UPDATE generator set g_brand = %s, g_fuel_type = %s, g_power = %s where r_id = %s;'
+        cursor.execute(q2, (g_brand, g_fuel_type, g_power, r_id,))
+        self.conn.commit()
+        return r_id
+
     def getAllResourcesPurchases(self):
         cursor = self.conn.cursor()
         query = 'select p_id, r_id, r_type from resource natural inner join offers natural inner join  payment natural inner join resource_order natural inner join buys;'

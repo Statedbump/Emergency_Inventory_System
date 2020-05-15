@@ -393,21 +393,19 @@ class ResourcesHandler:
             r_availability = form['r_availability']
             if r_type and r_quantity and r_location and r_price and r_availability:
                 dao = ResourcesDAO()
-                r_id = dao.insert(r_type,r_quantity,r_location,r_price,r_availability)
+                r_id = dao.insertResource(r_type, r_quantity, r_location, r_price, r_availability)
                 result = self.build_resource_attributes(r_id, r_type, r_quantity, r_location, r_price, r_availability)
                 if 'water' in r_type:
                     water_type = form['water_type']
                     measurement_unit = form['measurement_unit']
-                    dao = ResourcesDAO()
-                    w_id = dao.insertWater( water_type, measurement_unit,r_id)
+                    w_id = dao.insertWater(water_type, measurement_unit,r_id)
                     water = self.build_resource_attributes(r_id,r_type,r_quantity,r_location,r_price,r_availability,w_id, water_type,measurement_unit)
                     return jsonify(Water=water), 201
                 if 'fuel' in r_type:
                     fuel_type = form['fuel_type']
                     fuel_octane_rating = form['fuel_octane_rating']
-                    dao = ResourcesDAO()
                     fuel_id = dao.insertFuel(fuel_type, fuel_octane_rating,r_id)
-                    fuel = self.build_resource_attributes(r_id, r_type, r_quantity,r_location, r_price, r_availability, fuel_id, fuel_type, fuel_octane_rating,)
+                    fuel = self.build_resource_attributes(r_id, r_type, r_quantity,r_location, r_price, r_availability, fuel_id, fuel_type, fuel_octane_rating)
                     return jsonify(Fuel=fuel), 201
                 if 'food' in r_type:
                     food_type = form['food_type']
@@ -418,7 +416,7 @@ class ResourcesHandler:
                     batt_type = form['batt_type']
                     batt_volts = form['batt_volts']
                     batt_id = dao.insertBattery(batt_type, batt_volts, r_id)
-                    batt = self.build_resource_attributes(r_id, r_type, r_quantity, r_location,r_price, r_availability,  batt_id, batt_type, batt_volts,)
+                    batt = self.build_resource_attributes(r_id, r_type, r_quantity, r_location,r_price, r_availability,  batt_id, batt_type, batt_volts)
                     return jsonify(Battery=batt), 201
                 if 'generator' in r_type:
                     g_brand = form['g_brand']
@@ -477,6 +475,116 @@ class ResourcesHandler:
             result = self.build_resources_requests_dict(row)
             result_list.append(result)
         return jsonify(ResourcesReserves=result_list)
+
+    def updateResource(self, r_id, form):
+        dao = ResourcesDAO()
+        if not dao.getResourceById(r_id):
+            return jsonify(Error="Resource not found."), 404
+        else:
+            if len(form) < 5 or len(form) > 8:
+                return jsonify(Error="Malformed pst Request"), 400
+            else:
+                r_type = form['r_type']
+                r_quantity = form['r_quantity']
+                r_location = form['r_location']
+                r_price = form['r_price']
+                r_availability = form['r_availability']
+                if r_type and r_quantity and r_location and r_price and r_availability:
+                    if 'water' in r_type:
+                        water_type = form['water_type']
+                        measurement_unit = form['measurement_unit']
+                        dao.updateResource(r_id, r_type, r_quantity, r_location, r_price,r_availability)
+                        dao.updateWater(water_type, measurement_unit, r_id)
+                        result={}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        result['water_type'] = water_type
+                        result['measurement_unit'] = measurement_unit
+                        return jsonify(Water=result), 200
+                    if 'fuel' in r_type:
+                        fuel_type = form['fuel_type']
+                        fuel_octane_rating = form['fuel_octane_rating']
+                        dao.updateResource(r_id, r_type, r_quantity, r_location, r_price,r_availability)
+                        dao.updateFuel( fuel_type, fuel_octane_rating, r_id)
+                        result = {}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        result['fuel_type'] = fuel_type
+                        result['fuel_octane_rating'] = fuel_octane_rating
+                        return jsonify(Fuel=result), 200
+                    if 'food' in r_type:
+                        food_type = form['food_type']
+                        dao.updateResource(r_id, r_type, r_quantity, r_location, r_price,r_availability)
+                        dao.updateFood(food_type, r_id)
+                        result = {}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        result['food_type'] = food_type
+                        return jsonify(Food=result), 200
+                    if 'battery' in r_type:
+                        batt_type = form['batt_type']
+                        batt_volts = form['batt_volts']
+                        dao.updateResource(r_id, r_type, r_quantity, r_location, r_price,r_availability)
+                        dao.updateBattery(batt_type, batt_volts, r_id)
+                        result = {}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        result['batt_type'] = batt_type
+                        result['batt_volts'] = batt_volts
+                        return jsonify(Battery=result), 200
+                    if 'generator' in r_type:
+                        g_brand = form['g_brand']
+                        g_fuel_type = form['g_fuel_type']
+                        g_power = form['g_power']
+                        dao.updateResource(r_id, r_type, r_quantity, r_location, r_price,r_availability)
+                        dao.updateGenerator(g_brand,g_fuel_type, g_power, r_id)
+                        result = {}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        result['g_brand'] = g_brand
+                        result['g_fuel_type'] = g_fuel_type
+                        result['g_power'] = g_power
+                        return jsonify(Generator=result), 200
+                    else:
+                        dao.updateResource(r_id,r_type, r_quantity, r_location, r_price, r_availability)
+                        result = {}
+                        result['r_id'] = r_id
+                        result['r_type'] = r_type
+                        result['r_quantity'] = r_quantity
+                        result['r_location'] = r_location
+                        result['r_price'] = r_price
+                        result['r_availability'] = r_availability
+                        return jsonify(Resource=result), 200
+                else:
+                    return jsonify(Error="Unexpected attributes in update request"), 400
+
+    def deleteResource(self, r_id):
+        dao = ResourcesDAO()
+        if not dao.getResourceById(r_id):
+            return jsonify(Error="Resource not found."), 404
+        else:
+            dao.deleteResource(r_id)
+            return jsonify(DeleteStatus="OK"), 200
 
 
 
