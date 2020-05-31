@@ -336,6 +336,16 @@ class ResourcesDAO:
          cur = self.conn.cursor()
          q = 'DELETE FROM supplies WHERE r_id=%s;'
          cur.execute(q, (r_id,))
+         q1 = "DELETE FROM food WHERE r_id = %s"
+         cur.execute(q1, (r_id,))
+         q1 = "DELETE FROM fuel WHERE r_id = %s"
+         cur.execute(q1, (r_id,))
+         q1 = "DELETE FROM water WHERE r_id = %s"
+         cur.execute(q1, (r_id,))
+         q1 = "DELETE FROM battery WHERE r_id = %s"
+         cur.execute(q1, (r_id,))
+         q1 = "DELETE FROM generator WHERE r_id = %s"
+         cur.execute(q1, (r_id,))
          q1 = "DELETE FROM resource WHERE r_id = %s"
          cur.execute(q1,(r_id,))
          self.conn.commit()

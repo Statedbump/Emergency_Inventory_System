@@ -16,7 +16,7 @@ create table resource(r_id serial primary key,r_type varchar(100),r_quantity int
 		     
 create table resource_order(o_id serial primary key, o_date DATE NULL DEFAULT CURRENT_DATE,o_quantity integer,r_list TEXT, order_total_price float);
 
-create table payment(payment_id serial primary key,payment_type varchar(100),payment_total float,
+create table payment(payment_id serial primary key,payment_type varchar(100),payment_total float, availablepayment boolean,
 		     o_id integer references resource_order(o_id));
 
 

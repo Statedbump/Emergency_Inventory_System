@@ -121,7 +121,7 @@ class PersonDAO:
                         self.conn.commit()
                         return 'Succeed'
                 else:
-                    query="select p_id from offers where p_id=%s;"
+                    query="select p_id from offers natural inner join payment where p_id=%s and availablepayment = true;"
                     cursor.execute(query,(pid,))
                     result = []
                     for row in cursor:
@@ -136,7 +136,7 @@ class PersonDAO:
                             result.append(row)
                         rlist = result[0][0]
                         rtotalprice = result[0][1]
-                        query = "select payment_id, payment_total from offers natural inner join payment where p_id =%s;"
+                        query = "select payment_id, payment_total from offers natural inner join payment where p_id =%s and availablepayment= true;"
                         cursor.execute(query, (pid,))
                         result = []
                         for row in cursor:
@@ -146,6 +146,8 @@ class PersonDAO:
                         if paytotal < rtotalprice:
                             return 'Not enough'
                         else:
+                            query = "update payment set availablepayment=false where payment_id=%s;"
+                            cursor.execute(query, (payid,))
                             query = "select p_id, r_id from offers natural inner join payment natural inner join resource_order natural inner join buys where p_id=%s and r_id=%s;"
                             cursor.execute(query, (pid, rid,))
                             result = []
@@ -237,7 +239,7 @@ class PersonDAO:
 
     def offerPayment(self,pid, payment_type, payment_total):
         cursor = self.conn.cursor()
-        query = "insert into payment(payment_type,payment_total) values (%s, %s) returning payment_id;"
+        query = "insert into payment(payment_type,payment_total, availablepayment) values (%s, %s, true) returning payment_id;"
         cursor.execute(query, (payment_type, payment_total,))
         result = []
         for row in cursor:

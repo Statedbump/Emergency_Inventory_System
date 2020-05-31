@@ -32,6 +32,8 @@ class AdminDAO:
 
     def deleteAdmin(self, admin_id):
         cursor = self.conn.cursor()
+        query = "delete from manages where admin_id = %s;"
+        cursor.execute(query, (admin_id,))
         query = "delete from administrator where admin_id = %s;"
         cursor.execute(query, (admin_id,))
         self.conn.commit()
